@@ -600,9 +600,9 @@ function makeAvatar(id,opts){
   const s=STYLES[id]||STYLES.activist_m1;
   const owned=(G&&G.shopOwned)||[];
   // Resolve equipped items
-  const hat=opts&&opts.hat?opts.hat:(owned.find(i=>i.startsWith('hat_'))||null);
-  const shoes=opts&&opts.shoes?opts.shoes:(owned.find(i=>i.startsWith('shoes_'))||null);
-  const acc=opts&&opts.acc?opts.acc:(owned.find(i=>i.startsWith('acc_'))||null);
+  const hat=opts&&opts.hat?opts.hat:(G&&G.equippedHat)||null;
+  const shoes=opts&&opts.shoes?opts.shoes:(G&&G.equippedShoes)||null;
+  const acc=opts&&opts.acc?opts.acc:(G&&G.equippedAcc)||null;
   // Hat colors/shapes
   const hatLayers={
     hat_march:`<rect x="13" y="0" width="14" height="4" fill="#1a3a6b"/><rect x="11" y="4" width="18" height="3" fill="#1a3a6b"/>`,
@@ -2426,10 +2426,13 @@ function renderShopItems(){
     const meetsAll10=!item.reqChapters||G.completedChapters.length>=item.reqChapters;
     const canBuy=meetsChapter&&meetsScore&&meetsAll10&&!owned&&G.gold>=item.cost;
     const locked=!meetsChapter||!meetsScore||!meetsAll10;
-    let statusLabel=owned?'✓ OWNED':(canBuy?`⭐ ${item.cost}`:(locked?`🔒 ${item.req||''}`:` ⭐ ${item.cost} (need more gold)`));
-    let statusColor=owned?'var(--green2)':(canBuy?'var(--amber)':(locked?'var(--text3)':'var(--red2)'));
-    return `<div class="shop-item ${owned?'owned':''} ${canBuy?'affordable':''} ${locked?'locked':''}"
-      onclick="${canBuy?`buyItem('${item.id}')`:''}" title="${item.desc}">
+    const equipped=(cat==='Hats'&&G.equippedHat===item.id)||(cat==='Shoes'&&G.equippedShoes===item.id)||(cat==='Accessories'&&G.equippedAcc===item.id)||(cat==='Outfits'&&G.outfitId===item.id);
+    let statusLabel=owned?(equipped?'✓ WEARING':'TAP TO WEAR'):(canBuy?`⭐ ${item.cost}`:(locked?`🔒 ${item.req||''}`:` ⭐ ${item.cost}`));
+    let statusColor=owned?(equipped?'var(--green2)':'var(--amber)'):(canBuy?'var(--amber)':(locked?'var(--text3)':'var(--red2)'));
+    const clickAction=owned&&cat!=='Outfits'?`equipItem('${item.id}','${cat}',true)`:canBuy?`buyItem('${item.id}')`:'';
+    return `<div class="shop-item ${owned?'owned':''} ${canBuy?'affordable':''} ${locked?'locked':''} ${equipped?'equipped':''}"
+      style="${equipped?'border-color:var(--green2);opacity:1':''}"
+      onclick="${clickAction}" title="${item.desc}">
       <div class="shop-item-icon">${item.icon}</div>
       <div class="shop-item-name">${item.name}</div>
       <div class="shop-item-cost" style="color:${statusColor}">${statusLabel}</div>
@@ -2443,6 +2446,7 @@ function buyItem(id){
   if(!item||G.gold<item.cost)return;
   G.gold-=item.cost;
   G.shopOwned.push(id);
+  equipItem(id,item.cat,false);
   if(item.cat==='Outfits'){
     if(!G.unlockedOutfits)G.unlockedOutfits=['casual'];
     if(!G.unlockedOutfits.includes(id))G.unlockedOutfits.push(id);
@@ -2451,8 +2455,14 @@ function buyItem(id){
   save();updateHUD();
   document.getElementById('shop-gold-display').textContent=G.gold;
   renderShopItems();
-  notify(`${item.icon} ${item.name} unlocked!`,'green');
+  notify(`${item.icon} ${item.name} equipped!`,'green');
   checkAchievements();
+}
+function equipItem(id,cat,doSave){
+  if(cat==='Hats'){G.equippedHat=G.equippedHat===id?null:id;}
+  else if(cat==='Shoes'){G.equippedShoes=G.equippedShoes===id?null:id;}
+  else if(cat==='Accessories'){G.equippedAcc=G.equippedAcc===id?null:id;}
+  if(doSave){save();updateHUD();renderShopItems();notify('Equipped! ✓','green');}
 }
 
 // ═══════════════════════════════════════
