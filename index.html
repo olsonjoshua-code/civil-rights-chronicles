@@ -452,7 +452,6 @@ body::after { content: ''; position: fixed; inset: 0;
   <div style="background:var(--bg2);border:1px solid var(--amber2);padding:28px 24px;max-width:360px;width:100%;text-align:center">
     <div style="font-family:var(--bebas);font-size:22px;color:var(--amber);letter-spacing:3px;margin-bottom:6px">CLASS ACCESS</div>
     <div style="font-family:var(--crimson);font-size:15px;color:var(--text2);font-style:italic;margin-bottom:16px">Enter the code your teacher gave you</div>
-    <div style="font-family:var(--dm);font-size:9px;color:var(--text3);margin-bottom:12px;border:1px solid var(--border);padding:6px 10px;text-align:left">Teacher access: use code <strong style="color:var(--amber)">TEACHER</strong></div>
     <div style="font-family:var(--bebas);font-size:11px;color:var(--text3);letter-spacing:2px;margin-bottom:6px;text-align:left">SELECT YOUR PERIOD</div>
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px">
       <div id="period-btn-3" style="background:var(--bg3);border:1.5px solid var(--border);padding:10px 6px;text-align:center;cursor:pointer" onclick="highlightPeriod('3')">
@@ -1912,7 +1911,7 @@ function highlightPeriod(p){
 function submitClassCode(){
   const code=document.getElementById('class-code-input').value.trim().toUpperCase();
   const errEl=document.getElementById('code-error');errEl.textContent='';
-  if(code==='TEACHER'){
+  if(code==='OLSON4219'){
     document.getElementById('code-gate-overlay').style.display='none';
     G=newGame();G.period='T';G.isTeacher=true;
     renderAvatarGrid();renderOutfitGridCreator();updateCharPreview();showScreen('char-screen');return;
