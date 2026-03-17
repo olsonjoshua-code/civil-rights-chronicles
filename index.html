@@ -193,6 +193,14 @@ body::after { content: ''; position: fixed; inset: 0;
 .loading-screen { position: fixed; inset: 0; background: var(--bg); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9000; transition: opacity 0.5s; }
 .loading-bar-wrap { width: 200px; height: 2px; background: var(--border2); margin-top: 20px; }
 .loading-bar-fill { height: 100%; background: var(--amber); transition: width 0.3s; width: 0%; }
+.shop-item { background:var(--bg2);border:1.5px solid var(--border);padding:12px;text-align:center;transition:border-color 0.15s; }
+.shop-item.owned { border-color:var(--green);opacity:0.7; }
+.shop-item.affordable:hover { border-color:var(--amber2);cursor:pointer; }
+.shop-item.locked { opacity:0.35; }
+.shop-item-icon { font-size:32px;margin-bottom:6px; }
+.shop-item-name { font-family:var(--playfair);font-size:12px;color:var(--cream);font-style:italic;margin-bottom:4px; }
+.shop-item-cost { font-family:var(--bebas);font-size:13px;color:var(--amber);letter-spacing:1px; }
+.shop-item-req { font-family:var(--dm);font-size:8px;color:var(--text3);margin-top:2px; }
 ::-webkit-scrollbar { width: 4px; } ::-webkit-scrollbar-track { background: var(--bg); }
 ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; } ::-webkit-scrollbar-thumb:hover { background: var(--amber2); }
 .scene-svg { width: 100%; height: 100%; }
@@ -232,6 +240,7 @@ body::after { content: ''; position: fixed; inset: 0;
       <div class="hud-stat">SCORE<span id="hud-score">0</span></div>
       <div class="hud-stat">LEVEL<span id="hud-level">1</span></div>
       <div class="hud-stat">CARDS<span id="hud-cards">0</span></div>
+      <div class="hud-stat">GOLD<span id="hud-gold" style="color:var(--amber3)">0</span></div>
     </div>
   </div>
 </div>
@@ -248,6 +257,9 @@ body::after { content: ''; position: fixed; inset: 0;
   </div>
   <div style="margin-top:24px;font-family:var(--dm);font-size:9px;color:var(--text3);letter-spacing:1px">
     FLORIDA EOC ALIGNED · SS.912.A.7.5 · SS.912.A.7.6 · SS.912.A.7.7 · SS.912.A.7.8
+  </div>
+  <div style="margin-top:10px;font-family:var(--dm);font-size:10px;color:var(--text3);letter-spacing:1px">
+    CREATED BY JOSHUA OLSON
   </div>
 </div>
 
@@ -442,11 +454,52 @@ body::after { content: ''; position: fixed; inset: 0;
 </div>
 
 <div id="bottom-nav">
-  <button class="bn-btn active" onclick="showScreen('hub-screen');setActiveNav(0)"><span class="bn-icon">🏠</span>Hub</button>
+  <button class="bn-btn" onclick="showScreen('hub-screen');setActiveNav(0)"><span class="bn-icon">🏠</span>Hub</button>
   <button class="bn-btn" onclick="openLeaderboard()"><span class="bn-icon">🏆</span>Ranks</button>
   <button class="bn-btn" onclick="openProfile()"><span class="bn-icon">✊</span>Profile</button>
+  <button class="bn-btn" onclick="openShop()"><span class="bn-icon">🛒</span>Shop</button>
   <button class="bn-btn" onclick="openCardCollection()"><span class="bn-icon">🃏</span>Cards</button>
-  <button class="bn-btn" onclick="openTimeline()"><span class="bn-icon">📜</span>Timeline</button>
+</div>
+
+<div class="overlay" id="shop-overlay">
+  <div class="overlay-header">
+    <div class="overlay-title">Movement Store</div>
+    <button class="overlay-close" onclick="document.getElementById('shop-overlay').classList.remove('show')">CLOSE</button>
+  </div>
+  <div style="display:flex;align-items:center;gap:10px;background:var(--bg2);border:1px solid var(--amber2);padding:10px 14px;margin-bottom:14px">
+    <span style="font-size:20px">⭐</span>
+    <div>
+      <div style="font-family:var(--bebas);font-size:11px;color:var(--text3);letter-spacing:2px">YOUR GOLD</div>
+      <div style="font-family:var(--bebas);font-size:24px;color:var(--amber)" id="shop-gold-display">0</div>
+    </div>
+    <div style="margin-left:auto;font-family:var(--crimson);font-size:13px;color:var(--text2);font-style:italic">Earn gold by answering correctly</div>
+  </div>
+  <div id="shop-tabs" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px"></div>
+  <div id="shop-items-grid"></div>
+</div>
+
+<div id="completion-overlay" style="display:none;position:fixed;inset:0;background:rgba(13,10,8,0.97);z-index:600;overflow-y:auto;padding:20px 16px 80px">
+  <div style="max-width:480px;margin:0 auto;text-align:center;padding-top:20px">
+    <div style="font-family:var(--bebas);font-size:11px;color:var(--amber2);letter-spacing:4px;margin-bottom:16px">UNIT COMPLETE</div>
+    <div style="font-size:64px;margin-bottom:16px">✊</div>
+    <div style="font-family:var(--playfair);font-size:26px;color:var(--cream);font-style:italic;margin-bottom:6px" id="completion-name"></div>
+    <div style="font-family:var(--bebas);font-size:14px;color:var(--teal);letter-spacing:2px;margin-bottom:20px" id="completion-rank"></div>
+    <div style="font-family:var(--crimson);font-size:17px;color:var(--text);line-height:1.7;margin-bottom:24px;font-style:italic;border-left:3px solid var(--amber);padding:12px 16px;text-align:left;background:var(--bg2)">
+      "The arc of the moral universe is long, but it bends toward justice."<br>
+      <span style="font-size:13px;color:var(--amber);font-style:normal">— Dr. Martin Luther King Jr.</span>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:24px" id="completion-stats"></div>
+    <div style="background:var(--bg2);border:1px solid var(--amber2);padding:16px;margin-bottom:20px">
+      <div style="font-family:var(--bebas);font-size:12px;color:var(--text3);letter-spacing:2px;margin-bottom:12px">BADGES EARNED</div>
+      <div id="completion-badges" style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center"></div>
+    </div>
+    <div style="font-family:var(--crimson);font-size:15px;color:var(--text2);margin-bottom:24px;line-height:1.6" id="completion-message"></div>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px">
+      <button class="btn full green" onclick="printCertificate()"><span>🖨️ Print Certificate</span></button>
+      <button class="btn full" onclick="document.getElementById('completion-overlay').style.display='none';renderHub();showScreen('hub-screen')"><span>Return to Hub</span></button>
+    </div>
+    <div id="print-area" style="display:none"></div>
+  </div>
 </div>
 
 </div>
@@ -599,6 +652,35 @@ const RANKS=[
   {level:10,name:'Champion of Justice',minScore:25000},
 ];
 function getRank(){return[...RANKS].reverse().find(r=>G.score>=r.minScore)||RANKS[0];}
+
+// ── SHOP ITEMS ──
+const SHOP_CATEGORIES=['Hats','Shoes','Accessories','Outfits'];
+const SHOP_ITEMS=[
+  // HATS
+  {id:'hat_march',cat:'Hats',icon:'🧢',name:'March Cap',cost:150,desc:'Classic protest cap',req:null},
+  {id:'hat_sunday',cat:'Hats',icon:'👒',name:'Sunday Hat',cost:300,desc:'Church-going dignity',req:'Ch.1'},
+  {id:'hat_beret',cat:'Hats',icon:'🪖',name:'Freedom Beret',cost:400,desc:'Black Power pride',req:'Ch.8',reqChapter:'black_power'},
+  {id:'hat_grad',cat:'Hats',icon:'🎓',name:'Scholar\'s Cap',cost:500,desc:'Knowledge is power',req:'Ch.7',reqChapter:'great_society'},
+  {id:'hat_crown',cat:'Hats',icon:'👑',name:'Champion Crown',cost:900,desc:'For the movement\'s champion',req:'All chapters',reqChapters:10},
+  // SHOES
+  {id:'shoes_march',cat:'Shoes',icon:'👟',name:'March Sneakers',cost:150,desc:'Miles of walking',req:null},
+  {id:'shoes_dress',cat:'Shoes',icon:'👞',name:'Dress Shoes',cost:300,desc:'Dressed for justice',req:'Ch.2',reqChapter:'sitin'},
+  {id:'shoes_boots',cat:'Shoes',icon:'🥾',name:'Freedom Boots',cost:450,desc:'Ready for anything',req:'Ch.3',reqChapter:'freedom_rides'},
+  {id:'shoes_gold',cat:'Shoes',icon:'✨',name:'Gold Steps',cost:800,desc:'Walk in gold',req:'5,000 pts',reqScore:5000},
+  // ACCESSORIES
+  {id:'acc_clipboard',cat:'Accessories',icon:'📋',name:'Organizer\'s Clipboard',cost:200,desc:'Plan the movement',req:null},
+  {id:'acc_bullhorn',cat:'Accessories',icon:'📣',name:'Bullhorn',cost:350,desc:'Amplify your voice',req:'Ch.2',reqChapter:'sitin'},
+  {id:'acc_banner',cat:'Accessories',icon:'🚩',name:'Freedom Banner',cost:400,desc:'Carry the cause',req:'Ch.5',reqChapter:'march_washington'},
+  {id:'acc_briefcase',cat:'Accessories',icon:'💼',name:'Lawyer\'s Briefcase',cost:500,desc:'Fight in the courts',req:'Ch.7',reqChapter:'great_society'},
+  {id:'acc_rose',cat:'Accessories',icon:'🌹',name:'Red Rose',cost:600,desc:'In memory of the fallen',req:'Ch.9',reqChapter:'king_assassination'},
+  {id:'acc_torch',cat:'Accessories',icon:'🔦',name:'Torch of Justice',cost:750,desc:'Light the way forward',req:'Ch.10',reqChapter:'legacy'},
+  // OUTFITS (mirrors OUTFITS array but sold via shop too)
+  {id:'sunday',cat:'Outfits',icon:'👔',name:'Sunday Best',cost:200,desc:'Shows dignity & respect',req:'Ch.1',reqChapter:'montgomery'},
+  {id:'protest',cat:'Outfits',icon:'🧥',name:'March Attire',cost:350,desc:'Ready for the streets',req:'Ch.2',reqChapter:'sitin'},
+  {id:'scholar',cat:'Outfits',icon:'🎓',name:'Scholar\'s Robe',cost:500,desc:'Knowledge is power',req:'Ch.3',reqChapter:'freedom_rides'},
+  {id:'freedom',cat:'Outfits',icon:'🚌',name:'Freedom Rider',cost:600,desc:'Riding for justice',req:'Ch.3',reqChapter:'freedom_rides'},
+  {id:'legacy',cat:'Outfits',icon:'⭐',name:'Legacy Suit',cost:900,desc:'Walk like a champion',req:'Ch.6',reqChapter:'selma'},
+];
 
 // ════════════════════════════════════════════════════════
 // SCENE SVGs (all original scenes + 6 new ones for Ch.4-6)
@@ -1868,6 +1950,7 @@ function updateHUD(){
   document.getElementById('hud-score').textContent=G.score.toLocaleString();
   document.getElementById('hud-level').textContent=G.level;
   document.getElementById('hud-cards').textContent=G.unlockedCards.length;
+  document.getElementById('hud-gold').textContent=G.gold;
   document.getElementById('hud-momentum-bar').style.width=(G.momentum/G.maxMomentum*100)+'%';
 }
 
@@ -2074,6 +2157,7 @@ function completeChapter(){
 function closeChapterComplete(){
   document.getElementById('chapter-complete-overlay').classList.remove('show');
   renderHub();showScreen('hub-screen');window.scrollTo(0,0);
+  checkUnitComplete();
 }
 
 // ═══════════════════════════════════════
@@ -2259,6 +2343,141 @@ function closeLeaderboard(){document.getElementById('leaderboard-overlay').class
 function notify(msg,type){
   const n=document.createElement('div');n.className='notif '+(type||'');n.textContent=msg;
   document.body.appendChild(n);setTimeout(()=>n.remove(),3200);
+}
+
+// ═══════════════════════════════════════
+// SHOP
+// ═══════════════════════════════════════
+let shopCat='Hats';
+function openShop(){
+  document.getElementById('shop-gold-display').textContent=G.gold;
+  renderShopTabs();renderShopItems();
+  document.getElementById('shop-overlay').classList.add('show');
+}
+function renderShopTabs(){
+  document.getElementById('shop-tabs').innerHTML=SHOP_CATEGORIES.map(cat=>
+    `<div class="lb-tab ${shopCat===cat?'active':''}" onclick="shopCat='${cat}';renderShopTabs();renderShopItems()">${cat}</div>`
+  ).join('');
+}
+function renderShopItems(){
+  if(!G.shopOwned)G.shopOwned=[];
+  const items=SHOP_ITEMS.filter(i=>i.cat===shopCat);
+  const grid=document.getElementById('shop-items-grid');
+  grid.style.display='grid';
+  grid.style.gridTemplateColumns='repeat(3,1fr)';
+  grid.style.gap='8px';
+  grid.innerHTML=items.map(item=>{
+    const owned=G.shopOwned.includes(item.id)||(item.cat==='Outfits'&&G.unlockedOutfits&&G.unlockedOutfits.includes(item.id));
+    const meetsChapter=!item.reqChapter||G.completedChapters.includes(item.reqChapter);
+    const meetsScore=!item.reqScore||G.score>=item.reqScore;
+    const meetsAll10=!item.reqChapters||G.completedChapters.length>=item.reqChapters;
+    const canBuy=meetsChapter&&meetsScore&&meetsAll10&&!owned&&G.gold>=item.cost;
+    const locked=!meetsChapter||!meetsScore||!meetsAll10;
+    let statusLabel=owned?'✓ OWNED':(canBuy?`⭐ ${item.cost}`:(locked?`🔒 ${item.req||''}`:` ⭐ ${item.cost} (need more gold)`));
+    let statusColor=owned?'var(--green2)':(canBuy?'var(--amber)':(locked?'var(--text3)':'var(--red2)'));
+    return `<div class="shop-item ${owned?'owned':''} ${canBuy?'affordable':''} ${locked?'locked':''}"
+      onclick="${canBuy?`buyItem('${item.id}')`:''}" title="${item.desc}">
+      <div class="shop-item-icon">${item.icon}</div>
+      <div class="shop-item-name">${item.name}</div>
+      <div class="shop-item-cost" style="color:${statusColor}">${statusLabel}</div>
+      ${item.req&&!owned?`<div class="shop-item-req">Req: ${item.req}</div>`:''}
+    </div>`;
+  }).join('');
+}
+function buyItem(id){
+  if(!G.shopOwned)G.shopOwned=[];
+  const item=SHOP_ITEMS.find(i=>i.id===id);
+  if(!item||G.gold<item.cost)return;
+  G.gold-=item.cost;
+  G.shopOwned.push(id);
+  if(item.cat==='Outfits'){
+    if(!G.unlockedOutfits)G.unlockedOutfits=['casual'];
+    if(!G.unlockedOutfits.includes(id))G.unlockedOutfits.push(id);
+    G.outfitId=id;
+  }
+  save();updateHUD();
+  document.getElementById('shop-gold-display').textContent=G.gold;
+  renderShopItems();
+  notify(`${item.icon} ${item.name} unlocked!`,'green');
+  checkAchievements();
+}
+
+// ═══════════════════════════════════════
+// COMPLETION SCREEN
+// ═══════════════════════════════════════
+function checkUnitComplete(){
+  if(G.completedChapters.length>=CHAPTERS.length&&!G._completionShown){
+    G._completionShown=true;save();
+    setTimeout(showCompletionScreen,800);
+  }
+}
+function showCompletionScreen(){
+  const acc=G.totalAnswers>0?Math.round(G.correctAnswers/G.totalAnswers*100):0;
+  const rank=getRank();
+  document.getElementById('completion-name').textContent=G.name;
+  document.getElementById('completion-rank').textContent=rank.name+' · Level '+G.level;
+  document.getElementById('completion-stats').innerHTML=[
+    {icon:'🎯',label:'Overall Accuracy',val:acc+'%'},
+    {icon:'⭐',label:'Total Score',val:G.score.toLocaleString()},
+    {icon:'🃏',label:'Cards Collected',val:G.unlockedCards.length+'/'+CARDS.length},
+  ].map(s=>`<div style="background:var(--bg2);border:1px solid var(--border2);padding:14px;text-align:center">
+    <div style="font-size:28px;margin-bottom:4px">${s.icon}</div>
+    <div style="font-family:var(--bebas);font-size:22px;color:var(--amber)">${s.val}</div>
+    <div style="font-family:var(--dm);font-size:8px;color:var(--text3);margin-top:2px">${s.label}</div>
+  </div>`).join('');
+  document.getElementById('completion-badges').innerHTML=G.earnedBadges.map(bid=>{
+    const b=BADGES.find(x=>x.id===bid);
+    return b?`<div title="${b.name}" style="font-size:24px">${b.icon}</div>`:'';
+  }).join('');
+  const msg=acc>=90?'Exceptional! You demonstrated mastery of the Civil Rights Movement. History would be proud.':
+    acc>=75?'Outstanding! Your decisions showed strong understanding of the movement\'s strategies and significance.':
+    acc>=60?'Good work! You understood the key turning points. Review the chapters where the movement challenged you.':
+    'You\'ve completed the journey. The Civil Rights Movement was complex — every replay teaches you more.';
+  document.getElementById('completion-message').textContent=msg;
+  document.getElementById('completion-overlay').style.display='block';
+}
+function printCertificate(){
+  const acc=G.totalAnswers>0?Math.round(G.correctAnswers/G.totalAnswers*100):0;
+  const rank=getRank();
+  const printHTML=`<html><head><title>Chronicles of Change — Certificate</title>
+  <style>
+    @media print { body { margin:0; } }
+    body { font-family: Georgia, serif; background: #fff; color: #1a1008; padding: 40px; max-width: 700px; margin: 0 auto; }
+    .cert-border { border: 4px double #8b6020; padding: 40px; text-align: center; }
+    .cert-title { font-size: 11px; letter-spacing: 4px; color: #8b6020; text-transform: uppercase; margin-bottom: 8px; }
+    .cert-main { font-size: 32px; font-weight: bold; margin: 12px 0; color: #1a0808; }
+    .cert-sub { font-size: 14px; color: #5a3810; margin: 6px 0; }
+    .cert-name { font-size: 28px; font-style: italic; color: #c07818; margin: 16px 0; border-bottom: 2px solid #c07818; padding-bottom: 8px; display: inline-block; }
+    .cert-stats { display: flex; justify-content: center; gap: 40px; margin: 20px 0; }
+    .cert-stat { text-align: center; }
+    .cert-stat-val { font-size: 28px; font-weight: bold; color: #c07818; }
+    .cert-stat-lbl { font-size: 10px; letter-spacing: 2px; color: #8b6020; text-transform: uppercase; margin-top: 2px; }
+    .cert-quote { font-style: italic; font-size: 13px; color: #584840; margin: 20px 0; line-height: 1.6; border-left: 3px solid #c07818; padding: 8px 16px; text-align: left; }
+    .cert-footer { font-size: 10px; color: #8b6020; letter-spacing: 2px; margin-top: 24px; }
+    .cert-standards { font-size: 9px; color: #a09080; letter-spacing: 1px; margin-top: 8px; }
+  </style></head><body>
+  <div class="cert-border">
+    <div class="cert-title">Certificate of Completion</div>
+    <div class="cert-main">Chronicles of Change</div>
+    <div class="cert-sub">Civil Rights Movement Unit · US History</div>
+    <div style="margin:20px 0">This certifies that</div>
+    <div class="cert-name">${G.name}</div>
+    <div style="margin:12px 0;font-size:14px">has completed all 10 chapters of the Civil Rights Movement unit<br>achieving the rank of <strong>${rank.name}</strong></div>
+    <div class="cert-stats">
+      <div class="cert-stat"><div class="cert-stat-val">${acc}%</div><div class="cert-stat-lbl">Accuracy</div></div>
+      <div class="cert-stat"><div class="cert-stat-val">${G.score.toLocaleString()}</div><div class="cert-stat-lbl">Total Score</div></div>
+      <div class="cert-stat"><div class="cert-stat-val">${G.earnedBadges.length}</div><div class="cert-stat-lbl">Badges</div></div>
+      <div class="cert-stat"><div class="cert-stat-val">${G.unlockedCards.length}/${CARDS.length}</div><div class="cert-stat-lbl">Cards</div></div>
+    </div>
+    <div class="cert-quote">"The arc of the moral universe is long, but it bends toward justice."<br>— Dr. Martin Luther King Jr.</div>
+    <div class="cert-footer">Created by Joshua Olson · Florida EOC Aligned</div>
+    <div class="cert-standards">SS.912.A.7.5 · SS.912.A.7.6 · SS.912.A.7.7 · SS.912.A.7.8 · SS.912.A.7.9 · SS.912.A.7.13</div>
+  </div>
+  <script>window.onload=function(){window.print();window.close();}<\/script>
+  </body></html>`;
+  const w=window.open('','_blank','width=800,height=600');
+  w.document.write(printHTML);
+  w.document.close();
 }
 
 window.addEventListener('DOMContentLoaded',init);
