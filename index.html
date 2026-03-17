@@ -430,7 +430,7 @@ body::after { content: ''; position: fixed; inset: 0;
   <div class="card-grid" id="cardcoll-grid"></div>
 </div>
 
-<div id="teacher-dashboard" class="overlay" style="display:none">
+<div id="teacher-dashboard" class="overlay">
   <div class="overlay-header">
     <div class="overlay-title">📊 Teacher Dashboard</div>
     <button class="overlay-close" onclick="document.getElementById('teacher-dashboard').classList.remove('show')">CLOSE</button>
@@ -482,7 +482,7 @@ body::after { content: ''; position: fixed; inset: 0;
 </div>
 
 <div id="bottom-nav">
-  <button class="bn-btn" onclick="showScreen('hub-screen');setActiveNav(0)"><span class="bn-icon">🏠</span>Hub</button>
+  <button class="bn-btn active" onclick="showScreen('hub-screen');setActiveNav(0)"><span class="bn-icon">🏠</span>Hub</button>
   <button class="bn-btn" onclick="openLeaderboard()"><span class="bn-icon">🏆</span>Ranks</button>
   <button class="bn-btn" onclick="openProfile()"><span class="bn-icon">✊</span>Profile</button>
   <button class="bn-btn" onclick="openShop()"><span class="bn-icon">🛒</span>Shop</button>
