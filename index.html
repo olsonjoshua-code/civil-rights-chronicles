@@ -2426,7 +2426,7 @@ function renderShopItems(){
     const meetsAll10=!item.reqChapters||G.completedChapters.length>=item.reqChapters;
     const canBuy=meetsChapter&&meetsScore&&meetsAll10&&!owned&&G.gold>=item.cost;
     const locked=!meetsChapter||!meetsScore||!meetsAll10;
-    const equipped=(cat==='Hats'&&G.equippedHat===item.id)||(cat==='Shoes'&&G.equippedShoes===item.id)||(cat==='Accessories'&&G.equippedAcc===item.id)||(cat==='Outfits'&&G.outfitId===item.id);
+    const equipped=(item.cat==='Hats'&&G.equippedHat===item.id)||(item.cat==='Shoes'&&G.equippedShoes===item.id)||(item.cat==='Accessories'&&G.equippedAcc===item.id)||(item.cat==='Outfits'&&G.outfitId===item.id);
     let statusLabel=owned?(equipped?'✓ WEARING':'TAP TO WEAR'):(canBuy?`⭐ ${item.cost}`:(locked?`🔒 ${item.req||''}`:` ⭐ ${item.cost}`));
     let statusColor=owned?(equipped?'var(--green2)':'var(--amber)'):(canBuy?'var(--amber)':(locked?'var(--text3)':'var(--red2)'));
     const clickAction=owned&&cat!=='Outfits'?`equipItem('${item.id}','${cat}',true)`:canBuy?`buyItem('${item.id}')`:'';
@@ -2462,7 +2462,19 @@ function equipItem(id,cat,doSave){
   if(cat==='Hats'){G.equippedHat=G.equippedHat===id?null:id;}
   else if(cat==='Shoes'){G.equippedShoes=G.equippedShoes===id?null:id;}
   else if(cat==='Accessories'){G.equippedAcc=G.equippedAcc===id?null:id;}
-  if(doSave){save();updateHUD();renderShopItems();notify('Equipped! ✓','green');}
+  if(doSave){
+    save();
+    updateHUD();
+    // Also refresh hub banner avatar if visible
+    const hubAv=document.getElementById('hub-avatar');
+    const av=AVATARS.find(a=>a.id===G.avatarId);
+    if(hubAv&&av)hubAv.innerHTML=`<div style="width:60px;height:60px">${makeAvatar(av.id)}</div>`;
+    // Refresh char preview if visible
+    const charPrev=document.getElementById('char-preview-avatar');
+    if(charPrev&&av)charPrev.innerHTML=makeAvatar(av.id);
+    renderShopItems();
+    notify('Equipped! ✓','green');
+  }
 }
 
 // ═══════════════════════════════════════
@@ -2547,6 +2559,8 @@ function printCertificate(){
 // TEACHER DASHBOARD
 // ═══════════════════════════════════════
 let tdPeriod='all';
+let tdSort='score';
+let tdSortDir=-1;
 function openTeacherDashboard(){
   if(!G||!G.isTeacher){notify('Teacher access only','red');return;}
   document.getElementById('teacher-dashboard').classList.add('show');
@@ -2564,8 +2578,9 @@ async function loadTeacherData(){
   const tabsEl=document.getElementById('td-period-tabs');
   if(tabsEl){
     const tabs=[{key:'all',label:'ALL PERIODS'},...periods.map(p=>({key:p,label:'PERIOD '+p}))];
-    tabsEl.innerHTML=tabs.map(t=>`<div class="lb-tab ${tdPeriod===t.key?'active':''}" onclick="tdPeriod='${t.key}';renderTeacherView(${JSON.stringify(students)})">${t.label}</div>`).join('');
+    tabsEl.innerHTML=tabs.map(t=>`<div class="lb-tab ${tdPeriod===t.key?'active':''}" onclick="tdPeriod='${t.key}';renderTeacherView(window._tdStudents)">${t.label}</div>`).join('');
   }
+  window._tdStudents=students;
   renderTeacherView(students);
 }
 function renderTeacherView(allStudents){
@@ -2614,9 +2629,15 @@ function renderTeacherView(allStudents){
   const rosterEl=document.getElementById('td-roster');
   if(rosterEl){
     if(!students.length){rosterEl.innerHTML='<div style="font-family:var(--crimson);color:var(--text3);font-style:italic;padding:12px">No students found for this period.</div>';return;}
-    const sorted=[...students].sort((a,b)=>(b.score||0)-(a.score||0));
+    const sorted=[...students].sort((a,b)=>{
+      const v={score:(s)=>s.score||0,level:(s)=>s.level||1,chapters:(s)=>s.chapters||0,cards:(s)=>s.cards||0,name:(s)=>(s.name||'').toLowerCase(),period:(s)=>s.period||''}[tdSort]||((s)=>s.score||0);
+      return tdSortDir*(v(a)<v(b)?-1:v(a)>v(b)?1:0);
+    });
+    const thStyle='cursor:pointer;user-select:none;';
+    const arrow=(col)=>tdSort===col?(tdSortDir>0?' ↑':' ↓'):'';
+    const sortTh=(col,label)=>`<th style="${thStyle}" onclick="tdSort='${col}';tdSortDir=tdSort==='${col}'?-tdSortDir:-1;renderTeacherView(window._tdStudents)">${label}${arrow(col)}</th>`;
     rosterEl.innerHTML=`<table class="lb-table" style="margin-bottom:20px"><thead><tr>
-      <th>#</th><th>STUDENT</th><th>PD</th><th>SCORE</th><th>LEVEL</th><th>CH.</th><th>🃏</th><th>LAST SEEN</th>
+      <th>#</th>${sortTh('name','STUDENT')}${sortTh('period','PD')}${sortTh('score','SCORE')}${sortTh('level','LVL')}${sortTh('chapters','CH.')}${sortTh('cards','🃏')}<th>LAST SEEN</th>
     </tr></thead><tbody>
     ${sorted.map((s,i)=>{
       const lastSeen=s.updatedAt?new Date(s.updatedAt).toLocaleDateString():'—';
