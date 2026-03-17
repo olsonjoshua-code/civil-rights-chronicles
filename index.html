@@ -564,6 +564,7 @@ const AVATARS=[
   {id:'cr_lewis',era:'civil_rights',label:'John Lewis',badge:'🌉',desc:'Foot soldier of justice',unlockScore:3000},
   {id:'cr_nash',era:'civil_rights',label:'Diane Nash',badge:'📋',desc:'Nashville sit-in leader',unlockScore:4000},
   {id:'cr_hamer',era:'civil_rights',label:'Fannie Lou Hamer',badge:'🗣️',desc:'Voting rights champion',unlockScore:5500},
+  {id:'harry_moore',era:'civil_rights',label:'Harry T. Moore',badge:'🌴',desc:'Florida NAACP director',unlockScore:7000},
   {id:'prog_tr',era:'progressive',label:'Theodore Roosevelt',badge:'🦅',desc:'Trust-buster',unlockScore:800},
   {id:'prog_anthony',era:'progressive',label:'Susan B. Anthony',badge:'🗳️',desc:"Women's suffrage leader",unlockScore:1500},
   {id:'prog_addams',era:'progressive',label:'Jane Addams',badge:'🏠',desc:'Hull House founder',unlockScore:2500},
@@ -589,6 +590,7 @@ const STYLES={
   cr_lewis:{skin:'#3d1a0a',top:'#1a3a6b',bot:'#1a1a30',hair:'#0a0500'},
   cr_nash:{skin:'#6b3a1a',top:'#8b4020',bot:'#1a1a40',hair:'#0d0505'},
   cr_hamer:{skin:'#2a1005',top:'#4a1010',bot:'#1a1a1a',hair:'#050202'},
+  harry_moore:{skin:'#3d1a0a',top:'#1a3a6b',bot:'#1a1a30',hair:'#0a0500'},
   prog_tr:{skin:'#c49a6c',top:'#2a4020',bot:'#1a1a1a',hair:'#3a2800'},
   prog_anthony:{skin:'#e0c8a0',top:'#1a1a3a',bot:'#1a1a3a',hair:'#1a1a1a'},
   prog_addams:{skin:'#d4a870',top:'#2a3a2a',bot:'#1a1a1a',hair:'#2a1a00'},
@@ -695,6 +697,8 @@ const CARDS=[
   {id:'thurgood_marshall',figure:'⚖️',name:'Thurgood Marshall',desc:'Argued Brown v. Board of Education and later became the first Black Supreme Court Justice.',quote:'"None of us got where we are solely by pulling ourselves up by our bootstraps."'},
   {id:'fannie_lou_hamer',figure:'🗣️',name:'Fannie Lou Hamer',desc:'Sharecropper turned voting rights activist who testified before the 1964 Democratic Convention.',quote:'"I\'m sick and tired of being sick and tired."'},
   {id:'medgar_evers',figure:'⭐',name:'Medgar Evers',desc:'WWII veteran and NAACP field secretary who was assassinated for his civil rights work.',quote:'"You can kill a man, but you can\'t kill an idea."'},
+  {id:'harry_moore',figure:'🌴',name:'Harry T. Moore',desc:'Florida NAACP director who registered 100,000 Black voters before being assassinated on Christmas Night, 1951.',quote:'"We must make the ballot a living reality in the lives of all citizens."'},
+  {id:'tallahassee_boycott',figure:'🚌',name:'The Tallahassee Bus Boycott',desc:'FAMU students Wilhelmina Jakes and Carrie Patterson sparked a 7-month boycott in 1956 — running parallel to Montgomery, largely forgotten by history.',quote:'"Two students. One arrest. A movement that changed Florida forever."'},
 ];
 
 // ── RANKS ──
@@ -1828,6 +1832,63 @@ const CHAPTERS=[
     },
   ]
 },
+
+// ═══════════════════════════════════════════════════════
+// CHAPTER 11: Florida & the Civil Rights Movement
+// ═══════════════════════════════════════════════════════
+{
+  id:'florida_cr',num:11,title:'Florida & the Civil Rights Movement',icon:'🌴',
+  period:'Florida — 1941–1968',
+  context:"Florida's Civil Rights story began before Montgomery. Harry T. Moore built the NAACP's largest Southern state organization from his home in Mims, Florida, registering Black voters and investigating lynchings — until a bomb destroyed his home on Christmas Night 1951, killing him. Five years later, Florida A&M University students launched the Tallahassee Bus Boycott, running parallel to Montgomery. Virgil Hawkins fought for 10 years to integrate the University of Florida Law School. Florida's civil rights struggle was as significant as any in the nation — and largely forgotten.",
+  standards:['SS.912.A.6.15','SS.912.A.7.5','SS.912.A.7.6','SS.912.A.7.7'],
+  eocFocus:'Florida civil rights figures and events; SS.912.A.6.15 — Florida\'s role in the Civil Rights Movement',
+  keyVocab:[
+    {term:'Harry T. Moore',def:'NAACP Florida director; organized voter registration statewide; assassinated by bombing in 1951'},
+    {term:'Tallahassee Bus Boycott',def:'1956 FAMU student-led boycott of segregated Tallahassee city buses — ran parallel to Montgomery'},
+    {term:'Virgil Hawkins',def:'Black applicant who fought 10 years to integrate the University of Florida Law School'},
+    {term:'FAMU',def:'Florida A&M University — historically Black university in Tallahassee; center of Florida civil rights activity'},
+  ],
+  cardEarned:'tallahassee_boycott',badge:'first_step',
+  timelineEntry:{year:'1941–68',figure:'harry_moore',sprite:'🌴',title:'Florida Civil Rights',desc:"Harry T. Moore built Florida's NAACP before being assassinated in 1951. FAMU students launched the Tallahassee Bus Boycott in 1956, and Virgil Hawkins fought to integrate Florida's universities."},
+  beats:[
+    {
+      scene:'boycott_walk',location:'Mims, Florida / Statewide',date:'1941–1951',
+      narrative:"Harry T. Moore is a schoolteacher in Brevard County who becomes the NAACP's Florida director. Over a decade he builds the most active NAACP state conference in the South — 100,000 members. He registers over 100,000 Black Florida voters, turning them into a political force. He investigates every lynching in Florida, corresponding with the FBI and demanding federal action. He campaigns relentlessly for a federal anti-lynching law. The Ku Klux Klan puts him on a death list. On Christmas Night, December 25, 1951 — also his wedding anniversary — a bomb planted under his home explodes. Moore dies nine days later. His wife Harriette dies of her injuries weeks after that. No one is ever charged.",
+      charVoice:'Harry T. Moore was building a movement in Florida before Rosa Parks refused to give up her seat. His assassination was meant to stop the Florida movement — instead it inspired a new generation.',
+      decision:"What made Harry T. Moore's work so threatening to white supremacists in Florida?",
+      choices:[
+        {text:'His voter registration work — political power was more threatening than any lawsuit',correct:true,feedback:"Historians identify Moore's voter registration campaigns as his most threatening work. By 1950, he had helped register over 100,000 Black Florida voters — turning a previously disenfranchised population into a genuine political force that could elect and defeat candidates. White supremacists understood that political power was more durable and dangerous than legal victories. Moore's assassination was a direct attempt to destroy that political infrastructure.",std:'SS.912.A.6.15'},
+        {text:'His investigation of lynchings — he was documenting crimes that authorities wanted buried',correct:false,feedback:"Moore's anti-lynching work was courageous and important, but historians generally identify his voter registration campaign as his most systemically threatening work. Documenting lynchings exposed individual crimes; registering 100,000 voters threatened the entire political structure of Florida's white supremacist democracy.",std:'SS.912.A.6.15'},
+        {text:'His connections to Northern civil rights organizations',correct:false,feedback:"Moore did work with national NAACP leadership, but his power came from his grassroots organizing in Florida itself — building a 100,000-member state conference from scratch. It was the local power he built, not his national connections, that made him a target.",std:'SS.912.A.7.6'},
+        {text:'His role as a teacher — educating Black Floridians was seen as dangerous',correct:false,feedback:"Education was certainly part of the broader civil rights struggle, but Moore's assassination was directly connected to his political organizing — specifically his voter registration drives and his public campaigns against racial violence. The KKK's death list targeted him for his organizing, not his teaching.",std:'SS.912.A.6.15'},
+      ]
+    },
+    {
+      scene:'bus_1955',location:'Tallahassee, Florida',date:'May–December 1956',
+      narrative:"May 26, 1956 — two Florida A&M University students, Wilhelmina Jakes and Carrie Patterson, are arrested for sitting in the whites-only section of a Tallahassee city bus. FAMU students immediately organize a boycott. Unlike Montgomery, the Tallahassee boycott is led primarily by students and a young minister named C.K. Steele. The Inter-Civic Council coordinates carpools. The city fights back: carpool drivers are arrested for operating an 'unlicensed taxi service.' The boycott drags on for seven months. Simultaneously, the Supreme Court rules in the Montgomery case that bus segregation is unconstitutional — and Tallahassee's Black community presses the city to comply.",
+      charVoice:'The Tallahassee boycott runs parallel to Montgomery but gets far less national attention. The students must decide whether to accept a partial compromise or hold out for full desegregation.',
+      decision:'When the city offers a partial compromise — allowing Black passengers to sit from the back forward, whites from the front back — should the boycott accept it?',
+      choices:[
+        {text:'Accept — any progress is better than nothing',correct:false,feedback:"The boycott leaders correctly rejected partial compromise. Accepting \"back-to-front\" seating would have preserved the fundamental principle of segregation — that Black passengers sat separately from white passengers. The movement had learned from experience that accepting partial victories that preserved the logic of segregation meant fighting the same battle again. Full desegregation was the only acceptable outcome.",std:'SS.912.A.7.5'},
+        {text:'Reject it — partial desegregation preserves the logic of segregation',correct:true,feedback:"The Tallahassee boycott leaders, inspired by Montgomery, held out for complete desegregation. When the Supreme Court ruled bus segregation unconstitutional in the Montgomery case, Tallahassee's Inter-Civic Council used that ruling to demand full compliance. The Tallahassee boycott ended in December 1956 with the city desegregating its buses — the same month as Montgomery. Two Florida A&M students had sparked a movement that mirrored the most famous civil rights campaign in American history.",std:'SS.912.A.7.5'},
+        {text:'Suspend the boycott and file a lawsuit instead',correct:false,feedback:"The boycott and legal strategy were most powerful in combination, not as alternatives. The Montgomery legal case (Browder v. Gayle) had succeeded precisely because it was backed by sustained community economic pressure. Suspending the boycott would have removed the community's leverage and left the legal case without the public attention that made it politically significant.",std:'SS.912.A.7.7'},
+        {text:'Escalate to marches and sit-ins at City Hall',correct:false,feedback:"While more confrontational tactics would come later in the movement, in 1956 the boycott strategy was working. Escalating unnecessarily could have fractured the coalition and given city authorities justification for harsher crackdowns. The disciplined economic pressure of the boycott was the right tool for this moment.",std:'SS.912.A.7.5'},
+      ]
+    },
+    {
+      scene:'scotus_victory',location:'Gainesville, Florida / Washington D.C.',date:'1949–1958',
+      narrative:"Virgil Hawkins applies to the University of Florida College of Law in 1949. He is qualified. He is rejected because he is Black. He takes his case to the Florida Supreme Court — and wins. The University of Florida refuses to admit him anyway. He appeals to the U.S. Supreme Court, which sends the case back to Florida in 1956 with instructions to admit him 'without delay.' Florida's courts delay for two more years, finally admitting that desegregation might cause 'great public mischief.' After ten years of legal battles, Hawkins is told he will never be admitted. He finally gives up and earns his law degree in Massachusetts. The University of Florida is not fully integrated until the 1960s. Florida names its law school public interest fellowship program after Hawkins — he never practiced law in Florida.",
+      charVoice:'Virgil Hawkins won in court twice and still could not attend law school in his own state. What does his case reveal about the gap between legal rights and actual rights?',
+      decision:"What does the Virgil Hawkins case reveal about how desegregation actually worked — or didn't — in Florida?",
+      choices:[
+        {text:'Courts were powerless — only direct action could force change',correct:false,feedback:"Courts were not powerless — Brown v. Board and Browder v. Gayle produced real legal change. But Hawkins's case shows that court victories alone were insufficient without enforcement mechanisms and political will. The lesson was that legal strategy needed to be combined with community pressure, media attention, and political mobilization — exactly what the SCLC and SNCC provided in their campaigns.",std:'SS.912.A.7.8'},
+        {text:'Legal victories meant nothing without the political will and pressure to enforce them',correct:true,feedback:"This is precisely what Hawkins's decade-long case demonstrates. He won legal victories — twice — and still could not attend law school in Florida. Without federal enforcement pressure, community mobilization, and media attention that made continued defiance politically costly, court orders could be evaded indefinitely. This is why direct action campaigns like the Tallahassee boycott were essential complements to legal strategy.",std:'SS.912.A.7.8'},
+        {text:'Florida was uniquely resistant to civil rights progress compared to other Southern states',correct:false,feedback:"Florida's resistance to desegregation was typical of the South, not unique. The same pattern of legal victory followed by evasion and delay played out across Southern states — in Alabama with school desegregation, in Virginia with 'massive resistance,' in Mississippi with voter registration. Florida's story was the Southern story.",std:'SS.912.A.6.15'},
+        {text:'The NAACP legal strategy was fundamentally flawed from the beginning',correct:false,feedback:"The NAACP legal strategy produced landmark victories — Brown v. Board, Browder v. Gayle, and eventually the Civil Rights Acts. The problem was not the strategy but the enforcement gap between legal rulings and actual compliance. Hawkins's case is an argument for stronger enforcement mechanisms, not against legal strategy.",std:'SS.912.A.7.7'},
+      ]
+    },
+  ]
+},
 ];
 
 // ═══════════════════════════════════════
@@ -2300,11 +2361,19 @@ function equipOutfit(id){
   if(!G.unlockedOutfits.includes(id))G.unlockedOutfits.push(id);
   G.outfitId=id;
   save();
-  updateHUD();
-  const hubAv=document.getElementById('hub-avatar');
+  // Refresh every avatar on screen
   const av=AVATARS.find(a=>a.id===G.avatarId);
-  if(hubAv&&av)hubAv.innerHTML=`<div style="width:60px;height:60px">${makeAvatar(av.id)}</div>`;
-  renderShopItems();
+  if(!av)return;
+  const svg=makeAvatar(av.id);
+  const hudAv=document.getElementById('hud-avatar-el');
+  if(hudAv)hudAv.innerHTML=`<div style="width:42px;height:42px">${svg}</div>`;
+  const hubAv=document.getElementById('hub-avatar');
+  if(hubAv)hubAv.innerHTML=`<div style="width:60px;height:60px">${svg}</div>`;
+  const charPrev=document.getElementById('char-preview-avatar');
+  if(charPrev)charPrev.innerHTML=svg;
+  // Re-render shop and profile outfit grids if open
+  if(document.getElementById('shop-overlay').classList.contains('show'))renderShopItems();
+  if(document.getElementById('profile-overlay').classList.contains('show'))openProfile();
   notify('Outfit equipped! ✓','green');
 }
 
