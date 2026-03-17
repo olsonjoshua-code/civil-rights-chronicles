@@ -2260,9 +2260,6 @@ function setActiveNav(idx) {
 // ══════════════════════════════════════
 function init() {
   try { renderTitleScene(); } catch(e) { console.warn('renderTitleScene error:', e); }
-  if (load() && G && G.name) {
-    try { document.getElementById('btn-continue').style.display = 'block'; } catch(e) {}
-  }
   // Loading bar animation — hard max 1.5s then force hide
   let p = 0;
   const bar = document.getElementById('loading-bar');
@@ -2289,6 +2286,12 @@ function hideLoading() {
   setTimeout(() => {
     ls.style.display = 'none';
     ls.style.pointerEvents = 'none';
+    // Check for saved game AFTER loading screen is gone
+    try {
+      if (load() && G && G.name) {
+        document.getElementById('btn-continue').style.display = 'block';
+      }
+    } catch(e) {}
   }, 420);
 }
 
@@ -2983,7 +2986,10 @@ async function renderLeaderboard() {
   if (tabsEl) {
     const isTeacher = G && G.isTeacher;
     const tabs = [{ key:'all', label:'ALL PERIODS' }];
-    if (!isTeacher) tabs.push({ key: G?.period || '3', label: 'MY PERIOD' });
+    // Only show MY PERIOD tab if student is logged in with a real period
+    if (G && !isTeacher && G.period && G.period !== 'T') {
+      tabs.push({ key: G.period, label: 'MY PERIOD (Pd ' + G.period + ')' });
+    }
     tabs.push({ key:'3', label:'PERIOD 3' }, { key:'5', label:'PERIOD 5' }, { key:'6', label:'PERIOD 6' });
     tabsEl.innerHTML = tabs.map(t =>
       `<div class="lb-tab ${lbFilter===t.key?'active':''}" onclick="lbFilter='${t.key}';renderLeaderboard()">${t.label}</div>`
@@ -3003,7 +3009,7 @@ async function renderLeaderboard() {
     <th>#</th><th>ACTIVIST</th><th>PD</th><th>LVL</th><th>SCORE</th><th>🃏</th>
   </tr></thead><tbody>
   ${scores.slice(0, 25).map((s, i) => `
-    <tr class="${G && s.name === G.name && s.period === G.period ? 'lb-you' : ''}">
+    <tr class="${G && !G.isTeacher && s.name === G.name && s.period === G.period ? 'lb-you' : ''}">
       <td style="font-family:var(--bebas);font-size:12px;color:${i < 3 ? 'var(--amber)' : 'var(--text3)'}">${i < 3 ? medals[i] : '#' + (i+1)}</td>
       <td><div style="display:flex;align-items:center;gap:8px">
         <span style="font-size:20px">${s.avatarBadge || '✊'}</span>
