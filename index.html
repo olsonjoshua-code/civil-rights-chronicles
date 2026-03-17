@@ -434,7 +434,10 @@ body::after { content: ''; position: fixed; inset: 0;
 <div id="teacher-dashboard" class="overlay">
   <div class="overlay-header">
     <div class="overlay-title">📊 Teacher Dashboard</div>
-    <button class="overlay-close" onclick="document.getElementById('teacher-dashboard').classList.remove('show')">CLOSE</button>
+    <div style="display:flex;gap:8px;align-items:center">
+      <button onclick="resetAllScores()" style="font-family:var(--dm);font-size:9px;background:transparent;border:1px solid var(--red2);color:var(--red2);padding:6px 10px;cursor:pointer">RESET ALL</button>
+      <button class="overlay-close" onclick="document.getElementById('teacher-dashboard').classList.remove('show')">CLOSE</button>
+    </div>
   </div>
   <div style="font-family:var(--dm);font-size:9px;color:var(--text3);letter-spacing:2px;margin-bottom:12px" id="td-sync-status">Loading class data…</div>
 
@@ -2659,6 +2662,7 @@ function renderTeacherView(allStudents){
       const lastSeen=s.updatedAt?new Date(s.updatedAt).toLocaleDateString():'—';
       const chPct=Math.round((s.chapters||0)/10*100);
       const progressBar=`<div style="display:inline-block;width:40px;height:4px;background:rgba(255,255,255,0.1);border-radius:2px;vertical-align:middle;margin-left:4px"><div style="width:${chPct}%;height:100%;background:var(--amber2);border-radius:2px"></div></div>`;
+      const safeKey=encodeURIComponent(s.name+'||'+s.period);
       return `<tr>
         <td style="font-family:var(--dm);font-size:10px;color:var(--text3)">${i+1}</td>
         <td><div class="lb-name">${s.name||'—'}</div><div style="font-size:9px;color:var(--teal)">${s.rank||''}</div></td>
@@ -2668,10 +2672,33 @@ function renderTeacherView(allStudents){
         <td style="font-family:var(--dm);font-size:10px;color:var(--text2)">${s.chapters||0}/10${progressBar}</td>
         <td style="font-family:var(--dm);font-size:10px;color:var(--text2)">${s.cards||0}</td>
         <td style="font-family:var(--dm);font-size:9px;color:var(--text3)">${lastSeen}</td>
+        <td><button onclick="deleteStudent('${s.name}','${s.period}')" style="font-family:var(--bebas);font-size:10px;letter-spacing:1px;background:transparent;border:1px solid var(--red2);color:var(--red2);padding:3px 8px;cursor:pointer" title="Remove from leaderboard">✕</button></td>
       </tr>`;
     }).join('')}
     </tbody></table>`;
   }
+}
+
+async function deleteStudent(name,period){
+  if(!confirm(`Remove "${name}" (Period ${period}) from the leaderboard?`))return;
+  notify('Removing…');
+  try{
+    const scores=await fetchLeaderboard();
+    const updated=scores.filter(s=>!(s.name===name&&String(s.period)===String(period)));
+    await fetch(JSONBIN_URL,{method:'PUT',headers:{'Content-Type':'application/json','X-Master-Key':JSONBIN_API_KEY},body:JSON.stringify({scores:updated})});
+    notify(`${name} removed`,'green');
+    loadTeacherData();
+  }catch(e){notify('Error removing student','red');}
+}
+
+async function resetAllScores(){
+  if(!confirm('Reset ALL leaderboard scores? This cannot be undone.'))return;
+  if(!confirm('Are you sure? Every student score will be deleted.'))return;
+  try{
+    await fetch(JSONBIN_URL,{method:'PUT',headers:{'Content-Type':'application/json','X-Master-Key':JSONBIN_API_KEY},body:JSON.stringify({scores:[]})});
+    notify('Leaderboard reset!','green');
+    loadTeacherData();
+  }catch(e){notify('Error resetting leaderboard','red');}
 }
 
 window.addEventListener('DOMContentLoaded',init);
