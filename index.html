@@ -258,6 +258,7 @@ body::after { content: ''; position: fixed; inset: 0;
     <button class="btn full" onclick="startNewGame()"><span>Begin Your Journey</span></button>
     <button class="btn full blue" id="btn-continue" onclick="continueGame()" style="display:none"><span>Continue</span></button>
     <button class="btn full" style="border-color:var(--border2);color:var(--text2)" onclick="openLeaderboard()"><span>Leaderboard</span></button>
+    <button class="btn full" style="border-color:var(--teal);color:var(--teal);font-size:11px" onclick="showTeacherLogin()"><span>Teacher Login</span></button>
   </div>
   <div style="margin-top:24px;font-family:var(--dm);font-size:9px;color:var(--text3);letter-spacing:1px">
     FLORIDA EOC ALIGNED · SS.912.A.7.5 · SS.912.A.7.6 · SS.912.A.7.7 · SS.912.A.7.8
@@ -601,11 +602,12 @@ const STYLES={
 
 function makeAvatar(id,opts){
   const s=STYLES[id]||STYLES.activist_m1;
-  const owned=(G&&G.shopOwned)||[];
-  // Resolve equipped items
-  const hat=opts&&opts.hat?opts.hat:(G&&G.equippedHat)||null;
-  const shoes=opts&&opts.shoes?opts.shoes:(G&&G.equippedShoes)||null;
-  const acc=opts&&opts.acc?opts.acc:(G&&G.equippedAcc)||null;
+  const hat=(opts&&opts.hat)||(G&&G.equippedHat)||null;
+  const shoes=(opts&&opts.shoes)||(G&&G.equippedShoes)||null;
+  const acc=(opts&&opts.acc)||(G&&G.equippedAcc)||null;
+  // Outfit overrides top color
+  const outfitColors={casual:null,sunday:'#2a1060',protest:'#8b2020',scholar:'#1a3a1a',freedom:'#c07818',legacy:'#1a1a6b'};
+  const topColor=(G&&outfitColors[G.outfitId])||s.top;
   // Hat colors/shapes
   const hatLayers={
     hat_march:`<rect x="13" y="0" width="14" height="4" fill="#1a3a6b"/><rect x="11" y="4" width="18" height="3" fill="#1a3a6b"/>`,
@@ -636,7 +638,7 @@ function makeAvatar(id,opts){
     <rect x="16" y="8" width="2" height="2" fill="#1a0a00" opacity="0.8"/>
     <rect x="22" y="8" width="2" height="2" fill="#1a0a00" opacity="0.8"/>
     <rect x="17" y="11" width="6" height="1" fill="#8b3a2a" opacity="0.7"/>
-    <rect x="11" y="14" width="18" height="14" fill="${s.top}"/>
+    <rect x="11" y="14" width="18" height="14" fill="${topColor}"/>
     <rect x="8" y="14" width="4" height="12" fill="${s.skin}"/>
     <rect x="28" y="14" width="4" height="12" fill="${s.skin}"/>
     <rect x="13" y="28" width="7" height="14" fill="${s.bot}"/>
@@ -1935,6 +1937,20 @@ function confirmBackToHub(){
   }
 }
 function goHome(){save();showScreen('title-screen');document.getElementById('game-header').style.display='none';document.getElementById('bottom-nav').style.display='none';}
+function showTeacherLogin(){
+  const code=prompt('Enter teacher code:');
+  if(!code)return;
+  if(code.trim().toUpperCase()==='OLSON219'){
+    if(!G||!G.isTeacher){
+      G=newGame();G.period='T';G.isTeacher=true;G.name='Mr. Olson';
+      save();
+    }
+    showGameUI();renderHub();showScreen('hub-screen');
+    setTimeout(openTeacherDashboard,300);
+  } else {
+    alert('Incorrect teacher code.');
+  }
+}
 function continueGame(){if(load()&&G&&G.name){showGameUI();renderHub();showScreen('hub-screen');}}
 
 // ── CHARACTER CREATOR ──
@@ -2279,7 +2295,14 @@ function closeProfile(){document.getElementById('profile-overlay').classList.rem
 function equipOutfit(id){
   if(!G.unlockedOutfits)G.unlockedOutfits=['casual'];
   if(!G.unlockedOutfits.includes(id))G.unlockedOutfits.push(id);
-  G.outfitId=id;save();openProfile();notify('Outfit changed!');
+  G.outfitId=id;
+  save();
+  updateHUD();
+  const hubAv=document.getElementById('hub-avatar');
+  const av=AVATARS.find(a=>a.id===G.avatarId);
+  if(hubAv&&av)hubAv.innerHTML=`<div style="width:60px;height:60px">${makeAvatar(av.id)}</div>`;
+  renderShopItems();
+  notify('Outfit equipped! ✓','green');
 }
 
 // ═══════════════════════════════════════
