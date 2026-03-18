@@ -2781,13 +2781,13 @@ function renderTeacherView(allStudents){
     const arrow=(col)=>tdSort===col?(tdSortDir>0?' ↑':' ↓'):'';
     const sortTh=(col,label)=>`<th style="${thStyle}" onclick="tdSort='${col}';tdSortDir=tdSort==='${col}'?-tdSortDir:-1;renderTeacherView(window._tdStudents)">${label}${arrow(col)}</th>`;
     rosterEl.innerHTML=`<table class="lb-table" style="margin-bottom:20px"><thead><tr>
-      <th>#</th>${sortTh('name','STUDENT')}${sortTh('period','PD')}${sortTh('score','SCORE')}${sortTh('chapters','DONE%')}${sortTh('accuracy','CORRECT%')}${sortTh('grade','GRADE')}<th>LAST SEEN</th>
+      <th>#</th>${sortTh('name','STUDENT')}${sortTh('period','PD')}${sortTh('score','SCORE')}${sortTh('chapters','DONE%')}${sortTh('accuracy','CORRECT%')}${sortTh('grade','GRADE%')}<th>LAST SEEN</th>
     </tr></thead><tbody>
     ${sorted.map((s,i)=>{
       const lastSeen=s.updatedAt?new Date(s.updatedAt).toLocaleDateString():'—';
       const chPct=Math.round((s.chapters||0)/CHAPTERS.length*100);
       const acc=s.totalAnswers>0?Math.round((s.correctAnswers||0)/s.totalAnswers*100):null;
-      const grade=acc===null?'—':acc>=90?'A':acc>=80?'B':acc>=70?'C':acc>=60?'D':'F';
+      const grade=acc===null?'—':acc+'%';
       const gradeColor=acc===null?'var(--text3)':acc>=90?'var(--green2)':acc>=80?'var(--teal)':acc>=70?'var(--amber)':acc>=60?'var(--amber2)':'var(--red2)';
       const progressBar=`<div style="display:inline-block;width:40px;height:4px;background:rgba(255,255,255,0.1);border-radius:2px;vertical-align:middle;margin-left:4px"><div style="width:${chPct}%;height:100%;background:var(--amber2);border-radius:2px"></div></div>`;
       const safeKey=encodeURIComponent(s.name+'||'+s.period);
