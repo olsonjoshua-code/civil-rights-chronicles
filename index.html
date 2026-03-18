@@ -2181,7 +2181,10 @@ function loadBeat(){
   updateMomentumDisplay();
   document.getElementById('decision-header').textContent=beat.decision;
   const letters=['A','B','C','D'];
-  document.getElementById('choices-container').innerHTML=beat.choices.map((c,i)=>
+  // Shuffle choices so correct answer isn't always the same letter
+  const shuffled=[...beat.choices].sort(()=>Math.random()-0.5);
+  beat._shuffled=shuffled; // store for selectChoice
+  document.getElementById('choices-container').innerHTML=shuffled.map((c,i)=>
     `<button class="choice-btn" id="choice-${i}" onclick="selectChoice(${i})">
        <span class="choice-letter">${letters[i]}.</span>
        <span class="choice-text">${c.text}</span>
@@ -2194,15 +2197,19 @@ function loadBeat(){
 
 function selectChoice(idx){
   if(answeredCurrent)return;answeredCurrent=true;chapterTotal++;G.totalAnswers++;
-  const ch=CHAPTERS[currentChapterIdx];const beat=ch.beats[currentBeatIdx];const choice=beat.choices[idx];
-  beat.choices.forEach((c,i)=>{
+  const ch=CHAPTERS[currentChapterIdx];const beat=ch.beats[currentBeatIdx];
+  const choices=beat._shuffled||beat.choices; // use shuffled if available
+  const choice=choices[idx];
+  choices.forEach((c,i)=>{
     const btn=document.getElementById('choice-'+i);
-    if(c.correct)btn.classList.add('correct');
-    else if(i===idx&&!c.correct)btn.classList.add('incorrect');
-    btn.onclick=null;
+    if(btn){
+      if(c.correct)btn.classList.add('correct');
+      else if(i===idx&&!c.correct)btn.classList.add('incorrect');
+      btn.onclick=null;
+    }
   });
   const fp=document.getElementById('feedback-panel');const isCorrect=choice.correct;
-  chapterLog.push({question:beat.decision,chosen:choice.text,correct:isCorrect,correctAnswer:beat.choices.find(c=>c.correct)?.text||'',feedback:choice.feedback,standard:choice.std});
+  chapterLog.push({question:beat.decision,chosen:choice.text,correct:isCorrect,correctAnswer:choices.find(c=>c.correct)?.text||'',feedback:choice.feedback,standard:choice.std});
   if(isCorrect){
     chapterCorrect++;G.correctAnswers++;const pts=200;G.score+=pts;G.gold+=50;chapterScore+=pts;
     G.momentum=Math.min(G.maxMomentum,G.momentum+8);
@@ -2219,7 +2226,7 @@ function selectChoice(idx){
     fp.className='feedback-panel show incorrect';
     fp.innerHTML=`<div class="feedback-verdict incorrect">✗ WRONG — −100 PTS · −25 MOMENTUM</div>
       <div class="feedback-text">${choice.feedback}</div>
-      <div class="feedback-standard">📋 <strong>${choice.std}</strong> | Correct: <em>${beat.choices.find(c=>c.correct)?.text}</em></div>`;
+      <div class="feedback-standard">📋 <strong>${choice.std}</strong> | Correct: <em>${choices.find(c=>c.correct)?.text}</em></div>`;
     notify('−100 pts · −25 momentum','red');
   }
   // Update pip to show current beat answered
