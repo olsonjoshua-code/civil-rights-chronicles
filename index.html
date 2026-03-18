@@ -258,7 +258,14 @@ body::after { content: ''; position: fixed; inset: 0;
     <button class="btn full" onclick="startNewGame()"><span>Begin Your Journey</span></button>
     <button class="btn full blue" id="btn-continue" onclick="continueGame()" style="display:none"><span>Continue</span></button>
     <button class="btn full" style="border-color:var(--border2);color:var(--text2)" onclick="openLeaderboard()"><span>Leaderboard</span></button>
-    <button class="btn full" style="border-color:var(--teal);color:var(--teal);font-size:11px" onclick="showTeacherLogin()"><span>Teacher Login</span></button>
+    <div id="teacher-login-box" style="display:none;margin-top:8px">
+      <input id="teacher-code-input" type="password" maxlength="10"
+        style="font-family:var(--bebas);font-size:16px;letter-spacing:3px;background:var(--bg2);border:1.5px solid var(--teal);color:var(--cream);padding:10px 14px;width:100%;outline:none;text-align:center;text-transform:uppercase;margin-bottom:6px"
+        placeholder="ENTER CODE" onkeydown="if(event.key==='Enter')submitTeacherCode()">
+      <button class="btn full" style="border-color:var(--teal);color:var(--teal)" onclick="submitTeacherCode()"><span>Login as Teacher</span></button>
+      <div id="teacher-code-err" style="font-family:var(--dm);font-size:10px;color:var(--red2);min-height:14px;margin-top:4px"></div>
+    </div>
+    <button class="btn full" style="border-color:var(--teal);color:var(--teal);font-size:11px;margin-top:6px" onclick="document.getElementById('teacher-login-box').style.display=document.getElementById('teacher-login-box').style.display==='none'?'block':'none'"><span>Teacher Login</span></button>
   </div>
   <div style="margin-top:24px;font-family:var(--dm);font-size:9px;color:var(--text3);letter-spacing:1px">
     FLORIDA EOC ALIGNED · SS.912.A.7.5 · SS.912.A.7.6 · SS.912.A.7.7 · SS.912.A.7.8
@@ -2001,10 +2008,13 @@ function confirmBackToHub(){
   }
 }
 function goHome(){save();showScreen('title-screen');document.getElementById('game-header').style.display='none';document.getElementById('bottom-nav').style.display='none';}
-function showTeacherLogin(){
-  const code=prompt('Enter teacher code:');
-  if(!code)return;
-  if(code.trim().toUpperCase()==='OLSON219'){
+function submitTeacherCode(){
+  const input=document.getElementById('teacher-code-input');
+  const errEl=document.getElementById('teacher-code-err');
+  const code=(input?input.value:'').trim().toUpperCase();
+  if(code==='OLSON219'){
+    if(input)input.value='';
+    document.getElementById('teacher-login-box').style.display='none';
     if(!G||!G.isTeacher){
       G=newGame();G.period='T';G.isTeacher=true;G.name='Mr. Olson';
       save();
@@ -2012,7 +2022,8 @@ function showTeacherLogin(){
     showGameUI();renderHub();showScreen('hub-screen');
     setTimeout(openTeacherDashboard,300);
   } else {
-    alert('Incorrect teacher code.');
+    if(errEl)errEl.textContent='Incorrect code.';
+    if(input){input.style.borderColor='#e04040';setTimeout(()=>{input.style.borderColor='var(--teal)';},1500);}
   }
 }
 function continueGame(){if(load()&&G&&G.name){showGameUI();renderHub();showScreen('hub-screen');}}
