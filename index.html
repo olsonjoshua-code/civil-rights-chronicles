@@ -566,7 +566,9 @@ body::after { content: ''; position: fixed; inset: 0;
 <script>
 const SAVE_KEY='chronicles_v2_save';
 
-const GS_URL='https://script.google.com/macros/s/AKfycbxX6jsSzlrstflIEgiV3vTEcRmllezQfyaAaQf-hL3SEHV3Ji4n89CMxyMzEysH5D2w/exec';
+const SUPA_URL='https://iluvuartxsenbgylogit.supabase.co';
+const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlsdXZ1YXJ0eHNlbmJneWxvZ2l0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4NjA2OTIsImV4cCI6MjA4OTQzNjY5Mn0.stAmdi5xy7ofDAB4AiRg78Eoky-7FXZEa-Ui1dgwHd0';
+const SUPA_HEADERS={'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY};
 const TEACHERS={
   'olson':{name:'Mr. Olson',  periods:['3','5','6'],             teacherCode:'OLSON219'},
   'smith':{name:'Mrs. Smith', periods:['1','2','3','4','6','7'], teacherCode:'SMITH225'},
@@ -2517,14 +2519,35 @@ function openTimeline(){
 // LEADERBOARD (JSONbin) — Teacher shows on ALL tab only
 // ═══════════════════════════════════════
 async function fetchLeaderboard(){
-  try{const r=await fetch(GS_URL);const d=await r.json();return d.scores||[];}catch(e){return[];}
+  try{
+    const r=await fetch(SUPA_URL+'/rest/v1/scores?select=*&order=score.desc',{headers:SUPA_HEADERS});
+    const d=await r.json();
+    return (d||[]).map(s=>({
+      name:s.name,score:s.score,level:s.level,rank:s.rank,
+      period:s.period,teacher:s.teacher,chapters:s.chapters,
+      correctAnswers:s.correct_answers,totalAnswers:s.total_answers,
+      cards:s.cards,avatarBadge:s.avatar_badge,isTeacher:s.is_teacher,
+      updatedAt:new Date(s.updated_at).getTime()
+    }));
+  }catch(e){return[];}
 }
 async function pushLeaderboard(){
   if(!G||!G.name)return;
   try{
     const av=AVATARS.find(a=>a.id===G.avatarId);
-    const entry={action:'save',name:G.name,score:G.score,level:G.level,rank:getRank().name,cards:G.unlockedCards.length,avatarBadge:av?.badge||'✊',period:G.period,teacher:G.teacher||'',chapters:G.completedChapters.length,correctAnswers:G.correctAnswers||0,totalAnswers:G.totalAnswers||0,isTeacher:G.isTeacher||false,updatedAt:Date.now()};
-    await fetch(GS_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(entry)});
+    const row={
+      name:G.name,score:G.score,level:G.level,rank:getRank().name,
+      period:G.period,teacher:G.teacher||'',chapters:G.completedChapters.length,
+      correct_answers:G.correctAnswers||0,total_answers:G.totalAnswers||0,
+      cards:G.unlockedCards.length,avatar_badge:av?.badge||'✊',
+      is_teacher:G.isTeacher||false,updated_at:new Date().toISOString()
+    };
+    // Upsert — insert or update based on name+period match
+    await fetch(SUPA_URL+'/rest/v1/scores?on_conflict=name,period',{
+      method:'POST',
+      headers:{...SUPA_HEADERS,'Prefer':'resolution=merge-duplicates'},
+      body:JSON.stringify(row)
+    });
   }catch(e){}
 }
 
@@ -2856,7 +2879,7 @@ async function deleteStudent(name,period){
   if(!confirm(`Remove "${name}" (Period ${period}) from the leaderboard?`))return;
   notify('Removing…');
   try{
-    await fetch(GS_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'delete',name,period})});
+    await fetch(SUPA_URL+'/rest/v1/scores?name=eq.'+encodeURIComponent(name)+'&period=eq.'+encodeURIComponent(period),{method:'DELETE',headers:SUPA_HEADERS});
     notify(`${name} removed`,'green');
     loadTeacherData();
   }catch(e){notify('Error removing student','red');}
@@ -2866,7 +2889,7 @@ async function resetAllScores(){
   if(!confirm('Reset ALL leaderboard scores? This cannot be undone.'))return;
   if(!confirm('Are you sure? Every student score will be deleted.'))return;
   try{
-    await fetch(GS_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'reset'})});
+    await fetch(SUPA_URL+'/rest/v1/scores?id=gte.0',{method:'DELETE',headers:SUPA_HEADERS});
     notify('Leaderboard reset!','green');
     loadTeacherData();
   }catch(e){notify('Error resetting leaderboard','red');}
