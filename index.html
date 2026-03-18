@@ -553,9 +553,12 @@ body::after { content: ''; position: fixed; inset: 0;
 
 <script>
 const SAVE_KEY='chronicles_v2_save';
-const JSONBIN_URL='https://api.jsonbin.io/v3/b/69b950fdaa77b81da9f19d2b';
-const JSONBIN_API_KEY='$2a$10$5nNXYI2swPu5wbLXMn.6SuyVWa61gIcRFw/txiUg2ReQTDjvI9oIy';
-const CLASS_CODES={'MARCH':'3','FREEDM':'5','RIGHTS':'6'};
+const GS_URL='https://script.google.com/macros/s/AKfycbxX6jsSzlrstflIEgiV3vTEcRmllezQfyaAaQf-hL3SEHV3Ji4n89CMxyMzEysH5D2w/exec';
+const TEACHERS={
+  'olson':{name:'Mr. Olson',  periods:['3','5','6'],         teacherCode:'OLSON219'},
+  'smith':{name:'Mrs. Smith', periods:['1','2','3','4','6','7'], teacherCode:'SMITH225'},
+};
+const CLASS_CODES={};
 
 let G=null,currentChapterIdx=0,currentBeatIdx=0,chapterScore=0,chapterCorrect=0,chapterTotal=0,answeredCurrent=false,chapterLog=[];
 
@@ -2477,22 +2480,28 @@ function openTimeline(){
 // LEADERBOARD (JSONbin) — Teacher shows on ALL tab only
 // ═══════════════════════════════════════
 async function fetchLeaderboard(){
-  try{const r=await fetch(JSONBIN_URL+'/latest',{headers:{'X-Master-Key':JSONBIN_API_KEY}});const data=await r.json();return data.record?.scores||[];}catch(e){return[];}
+  try{
+    const r=await fetch(GS_URL);
+    const d=await r.json();
+    return d.scores||[];
+  }catch(e){return[];}
 }
 async function pushLeaderboard(){
   if(!G||!G.name)return;
   try{
-    const scores=await fetchLeaderboard();
     const av=AVATARS.find(a=>a.id===G.avatarId);
-    const entry={name:G.name,score:G.score,level:G.level,rank:getRank().name,cards:G.unlockedCards.length,avatarBadge:av?.badge||'✊',period:G.period,chapters:G.completedChapters.length,correctAnswers:G.correctAnswers||0,totalAnswers:G.totalAnswers||0,isTeacher:G.isTeacher||false,updatedAt:Date.now()};
-    const idx=scores.findIndex(s=>s.name===G.name&&s.period===G.period);
-    if(idx>=0){if(entry.score>=scores[idx].score)scores[idx]=entry;}else scores.push(entry);
-    scores.sort((a,b)=>b.score-a.score);
-    await fetch(JSONBIN_URL,{method:'PUT',headers:{'Content-Type':'application/json','X-Master-Key':JSONBIN_API_KEY},body:JSON.stringify({scores:scores})});
+    const entry={
+      action:'save',
+      name:G.name,score:G.score,level:G.level,rank:getRank().name,
+      cards:G.unlockedCards.length,avatarBadge:av?.badge||'✊',
+      period:G.period,teacher:G.teacher||'',
+      chapters:G.completedChapters.length,
+      correctAnswers:G.correctAnswers||0,totalAnswers:G.totalAnswers||0,
+      isTeacher:G.isTeacher||false,updatedAt:Date.now()
+    };
+    await fetch(GS_URL,{method:'POST',body:JSON.stringify(entry)});
   }catch(e){}
-}
-
-let lbFilter='all';
+}let lbFilter='all';
 async function renderLeaderboard(){
   const el=document.getElementById('lb-content');
   const status=document.getElementById('lb-sync-status');
@@ -2523,7 +2532,7 @@ async function renderLeaderboard(){
   el.innerHTML=`<table class="lb-table"><thead><tr>
     <th>#</th><th>ACTIVIST</th><th>PD</th><th>LVL</th><th>SCORE</th><th>🃏</th>
   </tr></thead><tbody>
-  ${scores.slice(0,25).map((s,i)=>`
+  ${scores.slice(0,200).map((s,i)=>`
     <tr class="${G&&s.name===G.name&&s.period===G.period?'lb-you':''}" ${s.isTeacher?'style="opacity:0.7"':''}>
       <td style="font-family:var(--bebas);font-size:12px;color:${i<3?'var(--amber)':'var(--text3)'}">${i<3?medals[i]:'#'+(i+1)}</td>
       <td><div style="display:flex;align-items:center;gap:8px">
@@ -2814,9 +2823,7 @@ async function deleteStudent(name,period){
   if(!confirm(`Remove "${name}" (Period ${period}) from the leaderboard?`))return;
   notify('Removing…');
   try{
-    const scores=await fetchLeaderboard();
-    const updated=scores.filter(s=>!(s.name===name&&String(s.period)===String(period)));
-    await fetch(JSONBIN_URL,{method:'PUT',headers:{'Content-Type':'application/json','X-Master-Key':JSONBIN_API_KEY},body:JSON.stringify({scores:updated})});
+    await fetch(GS_URL,{method:'POST',body:JSON.stringify({action:'delete',name,period})});
     notify(`${name} removed`,'green');
     loadTeacherData();
   }catch(e){notify('Error removing student','red');}
@@ -2826,7 +2833,7 @@ async function resetAllScores(){
   if(!confirm('Reset ALL leaderboard scores? This cannot be undone.'))return;
   if(!confirm('Are you sure? Every student score will be deleted.'))return;
   try{
-    await fetch(JSONBIN_URL,{method:'PUT',headers:{'Content-Type':'application/json','X-Master-Key':JSONBIN_API_KEY},body:JSON.stringify({scores:[]})});
+    await fetch(GS_URL,{method:'POST',body:JSON.stringify({action:'reset'})});
     notify('Leaderboard reset!','green');
     loadTeacherData();
   }catch(e){notify('Error resetting leaderboard','red');}
