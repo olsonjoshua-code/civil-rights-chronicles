@@ -315,6 +315,11 @@ body::after { content: ''; position: fixed; inset: 0;
     <button class="btn sm full green" onclick="saveGame()"><span>💾 Save Progress</span></button>
     <button class="btn sm full" style="border-color:var(--border2);color:var(--text2)" onclick="goHome()"><span>🏠 Main Menu</span></button>
   </div>
+  ${G.completedChapters.length>=CHAPTERS.length?`
+  <div style="background:rgba(232,160,32,0.08);border:1px solid var(--amber2);padding:12px 16px;margin-bottom:14px;text-align:center">
+    <div style="font-family:var(--playfair);font-size:13px;color:var(--amber);font-style:italic;margin-bottom:8px">You've completed the full unit! Replay from Ch.1 to earn more gold — your score, cards, and badges carry over.</div>
+    <button class="btn green" onclick="playAgain()"><span>↺ Play Again</span></button>
+  </div>`:''}
   <div id="teacher-btn-wrap" style="display:none;margin-bottom:14px">
     <button class="btn full" style="border-color:var(--teal);color:var(--teal)" onclick="openTeacherDashboard()"><span>📊 Teacher Dashboard</span></button>
   </div>
@@ -2026,6 +2031,16 @@ function submitTeacherCode(){
     if(input){input.style.borderColor='#e04040';setTimeout(()=>{input.style.borderColor='var(--teal)';},1500);}
   }
 }
+function playAgain(){
+  if(!confirm('Replay from Chapter 1? Your score, gold, cards, badges and items are kept — only chapter progress resets.'))return;
+  G.completedChapters=[];
+  G.beatenBeats=[];
+  G._completionShown=false;
+  save();
+  renderHub();
+  showScreen('hub-screen');
+  notify('Starting over — good luck! ✊','green');
+}
 function continueGame(){if(load()&&G&&G.name){showGameUI();renderHub();showScreen('hub-screen');}}
 
 // ── CHARACTER CREATOR ──
@@ -2129,7 +2144,7 @@ function renderHub(){
     let statusText=available?'PLAY':'LOCKED';
     if(completed){statusClass='completed';statusText='COMPLETED';}
     const beatCount=ch.beats.length;
-    return `<div class="unit-card ${statusClass}" onclick="${available||completed?`openChapter(${idx})`:''}">
+    return `<div class="unit-card ${statusClass}" onclick="${available?`openChapter(${idx})`:''}">
       <div class="unit-card-header">
         <div class="unit-icon">${ch.icon}</div>
         <div class="unit-info">
@@ -2138,7 +2153,6 @@ function renderHub(){
           <div class="unit-desc">${ch.period}</div>
         </div>
         <div class="unit-status ${statusClass}">${statusText}</div>
-          ${completed?`<div style="font-family:var(--dm);font-size:8px;color:var(--amber2);margin-top:3px">↺ replay for gold</div>`:''}
       </div>
       <div class="unit-progress-bar"><div class="unit-progress-fill" style="width:${progress}%"></div></div>
     </div>`;
