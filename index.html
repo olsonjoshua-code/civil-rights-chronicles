@@ -470,32 +470,47 @@ body::after { content: ''; position: fixed; inset: 0;
   <div id="td-roster"></div>
 </div>
 
-<div id="code-gate-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:1000;align-items:center;justify-content:center;">
+<div id="code-gate-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.95);z-index:1000;align-items:center;justify-content:center;">
   <div style="background:var(--bg2);border:1px solid var(--amber2);padding:28px 24px;max-width:360px;width:100%;text-align:center">
-    <div style="font-family:var(--bebas);font-size:22px;color:var(--amber);letter-spacing:3px;margin-bottom:6px">CLASS ACCESS</div>
-    <div style="font-family:var(--crimson);font-size:15px;color:var(--text2);font-style:italic;margin-bottom:16px">Enter the code your teacher gave you</div>
-    <div style="font-family:var(--bebas);font-size:11px;color:var(--text3);letter-spacing:2px;margin-bottom:6px;text-align:left">SELECT YOUR PERIOD</div>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px">
-      <div id="period-btn-3" style="background:var(--bg3);border:1.5px solid var(--border);padding:10px 6px;text-align:center;cursor:pointer" onclick="highlightPeriod('3')">
-        <div style="font-family:var(--bebas);font-size:20px;color:var(--amber)">3</div>
-        <div style="font-family:var(--dm);font-size:8px;color:var(--text3)">Period 3</div>
+
+    <!-- Step 1: Select Teacher -->
+    <div id="login-step-1">
+      <div style="font-family:var(--bebas);font-size:22px;color:var(--amber);letter-spacing:3px;margin-bottom:6px">SELECT YOUR TEACHER</div>
+      <div style="font-family:var(--crimson);font-size:14px;color:var(--text2);font-style:italic;margin-bottom:20px">Who is your US History teacher?</div>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:14px">
+        <div class="period-btn" onclick="selectTeacher('olson')" style="padding:14px;cursor:pointer;border:1.5px solid var(--border2);background:var(--bg3)">
+          <div style="font-family:var(--bebas);font-size:20px;color:var(--amber)">Mr. Olson</div>
+        </div>
+        <div class="period-btn" onclick="selectTeacher('smith')" style="padding:14px;cursor:pointer;border:1.5px solid var(--border2);background:var(--bg3)">
+          <div style="font-family:var(--bebas);font-size:20px;color:var(--amber)">Mrs. Smith</div>
+        </div>
+        <div class="period-btn" onclick="selectTeacher('guest')" style="padding:14px;cursor:pointer;border:1.5px solid var(--border2);background:var(--bg3)">
+          <div style="font-family:var(--bebas);font-size:16px;color:var(--text2)">Guest / Other</div>
+        </div>
       </div>
-      <div id="period-btn-5" style="background:var(--bg3);border:1.5px solid var(--border);padding:10px 6px;text-align:center;cursor:pointer" onclick="highlightPeriod('5')">
-        <div style="font-family:var(--bebas);font-size:20px;color:var(--amber)">5</div>
-        <div style="font-family:var(--dm);font-size:8px;color:var(--text3)">Period 5</div>
-      </div>
-      <div id="period-btn-6" style="background:var(--bg3);border:1.5px solid var(--border);padding:10px 6px;text-align:center;cursor:pointer" onclick="highlightPeriod('6')">
-        <div style="font-family:var(--bebas);font-size:20px;color:var(--amber)">6</div>
-        <div style="font-family:var(--dm);font-size:8px;color:var(--text3)">Period 6</div>
-      </div>
+      <button class="btn full" style="border-color:var(--border2);color:var(--text3);font-size:11px" onclick="document.getElementById('code-gate-overlay').style.display='none'"><span>Cancel</span></button>
     </div>
-    <div style="font-family:var(--bebas);font-size:11px;color:var(--text3);letter-spacing:2px;margin-bottom:6px;text-align:left">ENTER CLASS CODE</div>
-    <input id="class-code-input" type="text" maxlength="10"
-      style="font-family:var(--bebas);font-size:18px;letter-spacing:4px;background:var(--bg3);border:1.5px solid var(--border2);color:var(--cream);padding:12px 16px;width:100%;outline:none;text-align:center;text-transform:uppercase;margin-bottom:6px"
-      placeholder="_ _ _ _ _" onkeydown="if(event.key==='Enter')submitClassCode()">
-    <div id="code-error" style="font-family:var(--dm);font-size:10px;color:var(--red2);min-height:16px;margin-bottom:10px;text-align:left"></div>
-    <button class="btn full green" onclick="submitClassCode()"><span>Enter the Movement ✊</span></button>
-    <button class="btn full" style="border-color:var(--border2);color:var(--text3);margin-top:6px;font-size:11px" onclick="document.getElementById('code-gate-overlay').style.display='none'"><span>Cancel</span></button>
+
+    <!-- Step 2: Select Period -->
+    <div id="login-step-2" style="display:none">
+      <div style="font-family:var(--bebas);font-size:22px;color:var(--amber);letter-spacing:3px;margin-bottom:6px">SELECT YOUR PERIOD</div>
+      <div style="font-family:var(--crimson);font-size:14px;color:var(--text2);font-style:italic;margin-bottom:20px">Which class period are you in?</div>
+      <div id="period-buttons" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px"></div>
+      <button class="btn full" style="border-color:var(--border2);color:var(--text3);font-size:11px;margin-top:4px" onclick="goToStep(1)"><span>← Back</span></button>
+    </div>
+
+    <!-- Step 3: Enter Name -->
+    <div id="login-step-3" style="display:none">
+      <div style="font-family:var(--bebas);font-size:22px;color:var(--amber);letter-spacing:3px;margin-bottom:6px">ENTER YOUR NAME</div>
+      <div id="login-step3-label" style="font-family:var(--crimson);font-size:14px;color:var(--text2);font-style:italic;margin-bottom:16px"></div>
+      <input id="class-code-input" type="text" maxlength="30"
+        style="font-family:var(--playfair);font-size:16px;background:var(--bg3);border:1.5px solid var(--border2);color:var(--cream);padding:12px 16px;width:100%;outline:none;text-align:center;margin-bottom:6px"
+        placeholder="Your name" onkeydown="if(event.key==='Enter')submitClassCode()">
+      <div id="code-error" style="font-family:var(--dm);font-size:10px;color:var(--red2);min-height:16px;margin-bottom:10px;text-align:left"></div>
+      <button class="btn full green" onclick="submitClassCode()"><span>Enter the Movement ✊</span></button>
+      <button class="btn full" style="border-color:var(--border2);color:var(--text3);font-size:11px;margin-top:6px" onclick="goToStep(2)"><span>← Back</span></button>
+    </div>
+
   </div>
 </div>
 
@@ -1991,26 +2006,58 @@ function renderTitleScene(){
 // ═══════════════════════════════════════
 // GAME START
 // ═══════════════════════════════════════
-function startNewGame(){document.getElementById('code-gate-overlay').style.display='flex';}
-function highlightPeriod(p){
-  ['3','5','6'].forEach(n=>{const el=document.getElementById('period-btn-'+n);if(el)el.style.borderColor=n===p?'var(--amber)':'var(--border)';});
-  document.getElementById('class-code-input').dataset.period=p;
+function startNewGame(){
+  goToStep(1);
+  document.getElementById('code-gate-overlay').style.display='flex';
 }
+let _loginTeacher='';
+let _loginPeriod='';
+
+function goToStep(n){
+  [1,2,3].forEach(i=>document.getElementById('login-step-'+i).style.display=i===n?'block':'none');
+}
+
+function selectTeacher(key){
+  if(key==='guest'){
+    _loginTeacher='guest';
+    _loginPeriod='guest';
+    document.getElementById('login-step3-label').textContent='Playing as a guest — scores show on the ALL tab.';
+    goToStep(3);
+    return;
+  }
+  const t=TEACHERS[key];
+  if(!t)return;
+  _loginTeacher=key;
+  // Build period buttons
+  const grid=document.getElementById('period-buttons');
+  grid.innerHTML=t.periods.map(p=>`
+    <div onclick="selectPeriod('${p}')" style="background:var(--bg3);border:1.5px solid var(--border2);padding:14px 6px;text-align:center;cursor:pointer;border-radius:2px">
+      <div style="font-family:var(--bebas);font-size:24px;color:var(--amber)">${p}</div>
+      <div style="font-family:var(--dm);font-size:8px;color:var(--text3)">PERIOD ${p}</div>
+    </div>`).join('');
+  goToStep(2);
+}
+
+function selectPeriod(p){
+  _loginPeriod=p;
+  const t=TEACHERS[_loginTeacher];
+  document.getElementById('login-step3-label').textContent=(t?t.name+' · ':'')+'Period '+p;
+  document.getElementById('class-code-input').value='';
+  goToStep(3);
+}
+
 function submitClassCode(){
-  const code=document.getElementById('class-code-input').value.trim().toUpperCase();
-  const errEl=document.getElementById('code-error');errEl.textContent='';
-  if(code==='OLSON219'){
-    document.getElementById('code-gate-overlay').style.display='none';
-    G=newGame();G.period='T';G.isTeacher=true;
-    renderAvatarGrid();renderOutfitGridCreator();updateCharPreview();showScreen('char-screen');return;
-  }
-  const period=CLASS_CODES[code];
-  if(!period){errEl.textContent='Incorrect code. Check with your teacher.';
-    const inp=document.getElementById('class-code-input');inp.style.borderColor='#e04040';
-    setTimeout(()=>{inp.style.borderColor='';},1500);return;
-  }
+  const name=document.getElementById('class-code-input').value.trim();
+  const errEl=document.getElementById('code-error');
+  errEl.textContent='';
+  if(!name){errEl.textContent='Please enter your name.';return;}
   document.getElementById('code-gate-overlay').style.display='none';
-  G=newGame();G.period=period;G.isTeacher=false;
+  const t=TEACHERS[_loginTeacher];
+  G=newGame();
+  G.name=name;
+  G.period=_loginPeriod;
+  G.teacher=_loginTeacher;
+  G.isTeacher=false;
   renderAvatarGrid();renderOutfitGridCreator();updateCharPreview();showScreen('char-screen');
 }
 function confirmBackToHub(){
