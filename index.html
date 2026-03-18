@@ -2174,6 +2174,10 @@ function renderHub(){
 // CHAPTER FLOW
 // ═══════════════════════════════════════
 function openChapter(idx){
+  const ch=CHAPTERS[idx];
+  const completed=G.completedChapters.includes(ch.id);
+  const prevDone=idx===0||G.completedChapters.includes(CHAPTERS[idx-1]?.id);
+  if(completed||!prevDone)return; // hard block — completed or not yet unlocked
   currentChapterIdx=idx;const ch=CHAPTERS[idx];
   document.getElementById('chapter-num-display').textContent='CHAPTER '+ch.num;
   document.getElementById('chapter-name-display').textContent=ch.title;
