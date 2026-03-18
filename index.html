@@ -2181,9 +2181,9 @@ function loadBeat(){
   updateMomentumDisplay();
   document.getElementById('decision-header').textContent=beat.decision;
   const letters=['A','B','C','D'];
-  // Shuffle choices so correct answer isn't always the same letter
+  // Shuffle choices fresh every load — stored in module var, NOT on beat object
   const shuffled=[...beat.choices].sort(()=>Math.random()-0.5);
-  beat._shuffled=shuffled; // store for selectChoice
+  window._currentShuffled=shuffled;
   document.getElementById('choices-container').innerHTML=shuffled.map((c,i)=>
     `<button class="choice-btn" id="choice-${i}" onclick="selectChoice(${i})">
        <span class="choice-letter">${letters[i]}.</span>
@@ -2198,7 +2198,7 @@ function loadBeat(){
 function selectChoice(idx){
   if(answeredCurrent)return;answeredCurrent=true;chapterTotal++;G.totalAnswers++;
   const ch=CHAPTERS[currentChapterIdx];const beat=ch.beats[currentBeatIdx];
-  const choices=beat._shuffled||beat.choices; // use shuffled if available
+  const choices=window._currentShuffled||beat.choices;
   const choice=choices[idx];
   choices.forEach((c,i)=>{
     const btn=document.getElementById('choice-'+i);
