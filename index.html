@@ -2143,10 +2143,10 @@ function renderHub(){
   // Badges
   document.getElementById('badges-row').innerHTML=BADGES.map(b=>{
     const earned=G.earnedBadges.includes(b.id);
-    return `<div class="badge-pill ${earned?'earned':''}" onclick="notify('${b.icon} ${b.name}: ${b.desc}${earned?' ✓ Earned!':''}')" style="cursor:pointer">
+    return `<div class="badge-pill ${earned?'earned':''}" onclick="showBadgeInfo('${b.id}')" style="cursor:pointer">
       <span class="badge-icon">${b.icon}</span>
       <span>${b.name}</span>
-      ${!earned?'<span style="font-size:9px;color:var(--text3);margin-left:2px">?</span>':''}
+      ${!earned?'<span style="font-size:9px;color:var(--text3);margin-left:3px">?</span>':''}
     </div>`;
   }).join('');
   // Unit list
@@ -2540,6 +2540,12 @@ async function renderLeaderboard(){
   </tbody></table>`;
 }
 
+function showBadgeInfo(id){
+  const b=BADGES.find(x=>x.id===id);
+  if(!b)return;
+  const earned=G.earnedBadges.includes(id);
+  notify(b.icon+' '+b.name+': '+b.desc+(earned?' ✓':''),earned?'green':'');
+}
 function openLeaderboard(){
   if(G&&!G.isTeacher&&G.period)lbFilter=G.period;
   else lbFilter='all';
