@@ -316,15 +316,13 @@ body::after { content: ''; position: fixed; inset: 0;
     <button class="btn sm full green" onclick="saveGame()"><span>💾 Save Progress</span></button>
     <button class="btn sm full" style="border-color:var(--border2);color:var(--text2)" onclick="goHome()"><span>🏠 Main Menu</span></button>
   </div>
-  ${G.completedChapters.length>=CHAPTERS.length?`
-  <div style="background:rgba(232,160,32,0.08);border:1px solid var(--amber2);padding:12px 16px;margin-bott  ${G.completedChapters.length>=CHAPTERS.length?`
-  <div style="background:var(--bg2);border:1px solid var(--amber2);padding:14px;margin-bottom:14px;text-align:center">
-    <div style="font-family:var(--playfair);font-size:13px;color:var(--amber);font-style:italic;margin-bottom:8px">✊ You've completed the full Civil Rights unit!</div>
-    <div style="font-family:var(--crimson);font-size:13px;color:var(--text2);margin-bottom:10px">Start a new journey to keep earning — your score, gold, badges and items are kept.</div>
-    <button class="btn green" onclick="playAgain()"><span>↺ Begin New Journey</span></button>
-  </div>`:''}
   <div id="teacher-btn-wrap" style="display:none;margin-bottom:14px">
     <button class="btn full" style="border-color:var(--teal);color:var(--teal)" onclick="openTeacherDashboard()"><span>📊 Teacher Dashboard</span></button>
+  </div>
+  <div id="journey-banner" style="display:none;background:var(--bg2);border:1px solid var(--amber2);padding:14px;margin-bottom:14px;text-align:center">
+    <div style="font-family:var(--playfair);font-size:14px;color:var(--amber);font-style:italic;margin-bottom:8px">✊ You've completed the full Civil Rights unit!</div>
+    <div style="font-family:var(--crimson);font-size:13px;color:var(--text2);margin-bottom:10px">Start a new journey — your score, gold, badges and items are kept.</div>
+    <button class="btn green" onclick="playAgain()"><span>↺ Begin New Journey</span></button>
   </div>
   <div class="section-head">Your Badges</div>
   <div class="badges-row" id="badges-row"></div>
@@ -2132,6 +2130,15 @@ function renderHub(){
   const momPct=(G.momentum/G.maxMomentum*100);
   document.getElementById('hub-momentum-fill').style.width=momPct+'%';
   document.getElementById('hub-momentum-text').textContent=`Movement Momentum: ${G.momentum} / ${G.maxMomentum}`;
+  // New Journey banner — only when all chapters complete
+  const journeyBanner=document.getElementById('journey-banner');
+  if(journeyBanner){
+    if(G.completedChapters.length>=CHAPTERS.length){
+      journeyBanner.style.display='block';
+    } else {
+      journeyBanner.style.display='none';
+    }
+  }
   // Badges
   document.getElementById('badges-row').innerHTML=BADGES.map(b=>{
     const earned=G.earnedBadges.includes(b.id);
