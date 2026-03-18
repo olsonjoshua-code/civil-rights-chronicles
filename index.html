@@ -554,7 +554,12 @@ body::after { content: ''; position: fixed; inset: 0;
 <script>
 const SAVE_KEY='chronicles_v2_save';
 
-const CLASS_CODES={'MARCH':'3','FREEDM':'5','RIGHTS':'6'};
+const GS_URL='https://script.google.com/macros/s/AKfycbxX6jsSzlrstflIEgiV3vTEcRmllezQfyaAaQf-hL3SEHV3Ji4n89CMxyMzEysH5D2w/exec';
+const TEACHERS={
+  'olson':{name:'Mr. Olson',  periods:['3','5','6'],             teacherCode:'OLSON219'},
+  'smith':{name:'Mrs. Smith', periods:['1','2','3','4','6','7'], teacherCode:'SMITH225'},
+};
+const CLASS_CODES={};
 
 let G=null,currentChapterIdx=0,currentBeatIdx=0,chapterScore=0,chapterCorrect=0,chapterTotal=0,answeredCurrent=false,chapterLog=[];
 
@@ -2717,9 +2722,13 @@ async function loadTeacherData(){
   const statusEl=document.getElementById('td-sync-status');
   if(statusEl)statusEl.textContent='Fetching class data…';
   const allScores=await fetchLeaderboard();
-  const students=allScores.filter(s=>!s.isTeacher);
-  const everyone=allScores;
-  if(statusEl)statusEl.textContent=students.length+' students · '+allScores.length+' total entries · last sync: '+new Date().toLocaleTimeString();
+  // Filter to this teacher's students only
+  const myKey=G.teacher||'olson';
+  const myTeacher=TEACHERS[myKey];
+  const myPeriods=myTeacher?myTeacher.periods:[];
+  const everyone=allScores.filter(s=>s.isTeacher?s.name===G.name:myPeriods.includes(String(s.period)));
+  const students=everyone.filter(s=>!s.isTeacher);
+  if(statusEl)statusEl.textContent=students.length+' students · last sync: '+new Date().toLocaleTimeString();textContent=students.length+' students · '+allScores.length+' total entries · last sync: '+new Date().toLocaleTimeString();
 
   // Period tabs — built from everyone so teacher period shows too
   const periods=[...new Set(everyone.map(s=>s.period).filter(Boolean))].sort();
