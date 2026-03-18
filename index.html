@@ -2659,6 +2659,7 @@ async function loadTeacherData(){
   if(statusEl)statusEl.textContent='Fetching class data…';
   const allScores=await fetchLeaderboard();
   const students=allScores.filter(s=>!s.isTeacher);
+  const everyone=allScores; // includes teachers for roster display
   if(statusEl)statusEl.textContent=students.length+' students · last sync: '+new Date().toLocaleTimeString();
 
   // Period tabs
@@ -2668,11 +2669,12 @@ async function loadTeacherData(){
     const tabs=[{key:'all',label:'ALL PERIODS'},...periods.map(p=>({key:p,label:'PERIOD '+p}))];
     tabsEl.innerHTML=tabs.map(t=>`<div class="lb-tab ${tdPeriod===t.key?'active':''}" onclick="tdPeriod='${t.key}';renderTeacherView(window._tdStudents)">${t.label}</div>`).join('');
   }
-  window._tdStudents=students;
-  renderTeacherView(students);
+  window._tdStudents=everyone;
+  renderTeacherView(everyone);
 }
 function renderTeacherView(allStudents){
-  const students=tdPeriod==='all'?allStudents:allStudents.filter(s=>String(s.period)===tdPeriod);
+  const everyone=tdPeriod==='all'?allStudents:allStudents.filter(s=>String(s.period)===tdPeriod);
+  const students=everyone.filter(s=>!s.isTeacher); // stats use students only
 
   // Summary stats
   const avgScore=students.length?Math.round(students.reduce((a,s)=>a+(s.score||0),0)/students.length):0;
@@ -2716,8 +2718,8 @@ function renderTeacherView(allStudents){
   // Student roster table
   const rosterEl=document.getElementById('td-roster');
   if(rosterEl){
-    if(!students.length){rosterEl.innerHTML='<div style="font-family:var(--crimson);color:var(--text3);font-style:italic;padding:12px">No students found for this period.</div>';return;}
-    const sorted=[...students].sort((a,b)=>{
+    if(!everyone.length){rosterEl.innerHTML='<div style="font-family:var(--crimson);color:var(--text3);font-style:italic;padding:12px">No entries found for this period.</div>';return;}
+    const sorted=[...everyone].sort((a,b)=>{
       const v={score:(s)=>s.score||0,level:(s)=>s.level||1,chapters:(s)=>s.chapters||0,cards:(s)=>s.cards||0,name:(s)=>(s.name||'').toLowerCase(),period:(s)=>s.period||''}[tdSort]||((s)=>s.score||0);
       return tdSortDir*(v(a)<v(b)?-1:v(a)>v(b)?1:0);
     });
@@ -2732,9 +2734,10 @@ function renderTeacherView(allStudents){
       const chPct=Math.round((s.chapters||0)/10*100);
       const progressBar=`<div style="display:inline-block;width:40px;height:4px;background:rgba(255,255,255,0.1);border-radius:2px;vertical-align:middle;margin-left:4px"><div style="width:${chPct}%;height:100%;background:var(--amber2);border-radius:2px"></div></div>`;
       const safeKey=encodeURIComponent(s.name+'||'+s.period);
-      return `<tr>
+      const teacherTag=s.isTeacher?` <span style="font-size:8px;color:var(--teal);border:1px solid var(--teal);padding:1px 4px;border-radius:2px">TEACHER</span>`:'';
+      return `<tr style="${s.isTeacher?'opacity:0.7':''}">
         <td style="font-family:var(--dm);font-size:10px;color:var(--text3)">${i+1}</td>
-        <td><div class="lb-name">${s.name||'—'}</div><div style="font-size:9px;color:var(--teal)">${s.rank||''}</div></td>
+        <td><div class="lb-name">${s.name||'—'}${teacherTag}</div><div style="font-size:9px;color:var(--teal)">${s.rank||''}</div></td>
         <td style="font-family:var(--dm);font-size:10px;color:var(--text2)">${s.period||'?'}</td>
         <td class="lb-score">${(s.score||0).toLocaleString()}</td>
         <td style="font-family:var(--dm);font-size:11px;color:var(--teal)">Lv.${s.level||1}</td>
