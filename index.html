@@ -2488,7 +2488,7 @@ async function pushLeaderboard(){
     const idx=scores.findIndex(s=>s.name===G.name&&s.period===G.period);
     if(idx>=0){if(entry.score>=scores[idx].score)scores[idx]=entry;}else scores.push(entry);
     scores.sort((a,b)=>b.score-a.score);
-    await fetch(JSONBIN_URL,{method:'PUT',headers:{'Content-Type':'application/json','X-Master-Key':JSONBIN_API_KEY},body:JSON.stringify({scores:scores.slice(0,100)})});
+    await fetch(JSONBIN_URL,{method:'PUT',headers:{'Content-Type':'application/json','X-Master-Key':JSONBIN_API_KEY},body:JSON.stringify({scores:scores})});
   }catch(e){}
 }
 
@@ -2787,8 +2787,10 @@ function renderTeacherView(allStudents){
       const lastSeen=s.updatedAt?new Date(s.updatedAt).toLocaleDateString():'—';
       const chPct=Math.round((s.chapters||0)/CHAPTERS.length*100);
       const acc=s.totalAnswers>0?Math.round((s.correctAnswers||0)/s.totalAnswers*100):null;
-      const grade=acc===null?'—':acc+'%';
-      const gradeColor=acc===null?'var(--text3)':acc>=90?'var(--green2)':acc>=80?'var(--teal)':acc>=70?'var(--amber)':acc>=60?'var(--amber2)':'var(--red2)';
+      const compPct=Math.round((s.chapters||0)/CHAPTERS.length*100);
+      const grade=acc===null?'—':Math.round(compPct*0.5+acc*0.5)+'%';
+      const gradeVal=acc===null?0:Math.round(compPct*0.5+acc*0.5);
+      const gradeColor=acc===null?'var(--text3)':gradeVal>=90?'var(--green2)':gradeVal>=80?'var(--teal)':gradeVal>=70?'var(--amber)':gradeVal>=60?'var(--amber2)':'var(--red2)';
       const progressBar=`<div style="display:inline-block;width:40px;height:4px;background:rgba(255,255,255,0.1);border-radius:2px;vertical-align:middle;margin-left:4px"><div style="width:${chPct}%;height:100%;background:var(--amber2);border-radius:2px"></div></div>`;
       const safeKey=encodeURIComponent(s.name+'||'+s.period);
       const teacherTag=s.isTeacher?` <span style="font-size:8px;color:var(--teal);border:1px solid var(--teal);padding:1px 4px;border-radius:2px">TEACHER</span>`:'';
