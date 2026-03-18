@@ -470,47 +470,32 @@ body::after { content: ''; position: fixed; inset: 0;
   <div id="td-roster"></div>
 </div>
 
-<div id="code-gate-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.95);z-index:1000;align-items:center;justify-content:center;">
+<div id="code-gate-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:1000;align-items:center;justify-content:center;">
   <div style="background:var(--bg2);border:1px solid var(--amber2);padding:28px 24px;max-width:360px;width:100%;text-align:center">
-
-    <!-- Step 1: Select Teacher -->
-    <div id="login-step-1">
-      <div style="font-family:var(--bebas);font-size:22px;color:var(--amber);letter-spacing:3px;margin-bottom:6px">SELECT YOUR TEACHER</div>
-      <div style="font-family:var(--crimson);font-size:14px;color:var(--text2);font-style:italic;margin-bottom:20px">Who is your US History teacher?</div>
-      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:14px">
-        <div class="period-btn" onclick="selectTeacher('olson')" style="padding:14px;cursor:pointer;border:1.5px solid var(--border2);background:var(--bg3)">
-          <div style="font-family:var(--bebas);font-size:20px;color:var(--amber)">Mr. Olson</div>
-        </div>
-        <div class="period-btn" onclick="selectTeacher('smith')" style="padding:14px;cursor:pointer;border:1.5px solid var(--border2);background:var(--bg3)">
-          <div style="font-family:var(--bebas);font-size:20px;color:var(--amber)">Mrs. Smith</div>
-        </div>
-        <div class="period-btn" onclick="selectTeacher('guest')" style="padding:14px;cursor:pointer;border:1.5px solid var(--border2);background:var(--bg3)">
-          <div style="font-family:var(--bebas);font-size:16px;color:var(--text2)">Guest / Other</div>
-        </div>
+    <div style="font-family:var(--bebas);font-size:22px;color:var(--amber);letter-spacing:3px;margin-bottom:6px">CLASS ACCESS</div>
+    <div style="font-family:var(--crimson);font-size:15px;color:var(--text2);font-style:italic;margin-bottom:16px">Enter the code your teacher gave you</div>
+    <div style="font-family:var(--bebas);font-size:11px;color:var(--text3);letter-spacing:2px;margin-bottom:6px;text-align:left">SELECT YOUR PERIOD</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px">
+      <div id="period-btn-3" style="background:var(--bg3);border:1.5px solid var(--border);padding:10px 6px;text-align:center;cursor:pointer" onclick="highlightPeriod('3')">
+        <div style="font-family:var(--bebas);font-size:20px;color:var(--amber)">3</div>
+        <div style="font-family:var(--dm);font-size:8px;color:var(--text3)">Period 3</div>
       </div>
-      <button class="btn full" style="border-color:var(--border2);color:var(--text3);font-size:11px" onclick="document.getElementById('code-gate-overlay').style.display='none'"><span>Cancel</span></button>
+      <div id="period-btn-5" style="background:var(--bg3);border:1.5px solid var(--border);padding:10px 6px;text-align:center;cursor:pointer" onclick="highlightPeriod('5')">
+        <div style="font-family:var(--bebas);font-size:20px;color:var(--amber)">5</div>
+        <div style="font-family:var(--dm);font-size:8px;color:var(--text3)">Period 5</div>
+      </div>
+      <div id="period-btn-6" style="background:var(--bg3);border:1.5px solid var(--border);padding:10px 6px;text-align:center;cursor:pointer" onclick="highlightPeriod('6')">
+        <div style="font-family:var(--bebas);font-size:20px;color:var(--amber)">6</div>
+        <div style="font-family:var(--dm);font-size:8px;color:var(--text3)">Period 6</div>
+      </div>
     </div>
-
-    <!-- Step 2: Select Period -->
-    <div id="login-step-2" style="display:none">
-      <div style="font-family:var(--bebas);font-size:22px;color:var(--amber);letter-spacing:3px;margin-bottom:6px">SELECT YOUR PERIOD</div>
-      <div style="font-family:var(--crimson);font-size:14px;color:var(--text2);font-style:italic;margin-bottom:20px">Which class period are you in?</div>
-      <div id="period-buttons" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px"></div>
-      <button class="btn full" style="border-color:var(--border2);color:var(--text3);font-size:11px;margin-top:4px" onclick="goToStep(1)"><span>← Back</span></button>
-    </div>
-
-    <!-- Step 3: Enter Name -->
-    <div id="login-step-3" style="display:none">
-      <div style="font-family:var(--bebas);font-size:22px;color:var(--amber);letter-spacing:3px;margin-bottom:6px">ENTER YOUR NAME</div>
-      <div id="login-step3-label" style="font-family:var(--crimson);font-size:14px;color:var(--text2);font-style:italic;margin-bottom:16px"></div>
-      <input id="class-code-input" type="text" maxlength="30"
-        style="font-family:var(--playfair);font-size:16px;background:var(--bg3);border:1.5px solid var(--border2);color:var(--cream);padding:12px 16px;width:100%;outline:none;text-align:center;margin-bottom:6px"
-        placeholder="Your name" onkeydown="if(event.key==='Enter')submitClassCode()">
-      <div id="code-error" style="font-family:var(--dm);font-size:10px;color:var(--red2);min-height:16px;margin-bottom:10px;text-align:left"></div>
-      <button class="btn full green" onclick="submitClassCode()"><span>Enter the Movement ✊</span></button>
-      <button class="btn full" style="border-color:var(--border2);color:var(--text3);font-size:11px;margin-top:6px" onclick="goToStep(2)"><span>← Back</span></button>
-    </div>
-
+    <div style="font-family:var(--bebas);font-size:11px;color:var(--text3);letter-spacing:2px;margin-bottom:6px;text-align:left">ENTER CLASS CODE</div>
+    <input id="class-code-input" type="text" maxlength="10"
+      style="font-family:var(--bebas);font-size:18px;letter-spacing:4px;background:var(--bg3);border:1.5px solid var(--border2);color:var(--cream);padding:12px 16px;width:100%;outline:none;text-align:center;text-transform:uppercase;margin-bottom:6px"
+      placeholder="_ _ _ _ _" onkeydown="if(event.key==='Enter')submitClassCode()">
+    <div id="code-error" style="font-family:var(--dm);font-size:10px;color:var(--red2);min-height:16px;margin-bottom:10px;text-align:left"></div>
+    <button class="btn full green" onclick="submitClassCode()"><span>Enter the Movement ✊</span></button>
+    <button class="btn full" style="border-color:var(--border2);color:var(--text3);margin-top:6px;font-size:11px" onclick="document.getElementById('code-gate-overlay').style.display='none'"><span>Cancel</span></button>
   </div>
 </div>
 
@@ -568,12 +553,8 @@ body::after { content: ''; position: fixed; inset: 0;
 
 <script>
 const SAVE_KEY='chronicles_v2_save';
-const GS_URL='https://script.google.com/macros/s/AKfycbxX6jsSzlrstflIEgiV3vTEcRmllezQfyaAaQf-hL3SEHV3Ji4n89CMxyMzEysH5D2w/exec';
-const TEACHERS={
-  'olson':{name:'Mr. Olson',  periods:['3','5','6'],         teacherCode:'OLSON219'},
-  'smith':{name:'Mrs. Smith', periods:['1','2','3','4','6','7'], teacherCode:'SMITH225'},
-};
-const CLASS_CODES={};
+
+const CLASS_CODES={'MARCH':'3','FREEDM':'5','RIGHTS':'6'};
 
 let G=null,currentChapterIdx=0,currentBeatIdx=0,chapterScore=0,chapterCorrect=0,chapterTotal=0,answeredCurrent=false,chapterLog=[];
 
@@ -2006,58 +1987,26 @@ function renderTitleScene(){
 // ═══════════════════════════════════════
 // GAME START
 // ═══════════════════════════════════════
-function startNewGame(){
-  goToStep(1);
-  document.getElementById('code-gate-overlay').style.display='flex';
+function startNewGame(){document.getElementById('code-gate-overlay').style.display='flex';}
+function highlightPeriod(p){
+  ['3','5','6'].forEach(n=>{const el=document.getElementById('period-btn-'+n);if(el)el.style.borderColor=n===p?'var(--amber)':'var(--border)';});
+  document.getElementById('class-code-input').dataset.period=p;
 }
-let _loginTeacher='';
-let _loginPeriod='';
-
-function goToStep(n){
-  [1,2,3].forEach(i=>document.getElementById('login-step-'+i).style.display=i===n?'block':'none');
-}
-
-function selectTeacher(key){
-  if(key==='guest'){
-    _loginTeacher='guest';
-    _loginPeriod='guest';
-    document.getElementById('login-step3-label').textContent='Playing as a guest — scores show on the ALL tab.';
-    goToStep(3);
-    return;
-  }
-  const t=TEACHERS[key];
-  if(!t)return;
-  _loginTeacher=key;
-  // Build period buttons
-  const grid=document.getElementById('period-buttons');
-  grid.innerHTML=t.periods.map(p=>`
-    <div onclick="selectPeriod('${p}')" style="background:var(--bg3);border:1.5px solid var(--border2);padding:14px 6px;text-align:center;cursor:pointer;border-radius:2px">
-      <div style="font-family:var(--bebas);font-size:24px;color:var(--amber)">${p}</div>
-      <div style="font-family:var(--dm);font-size:8px;color:var(--text3)">PERIOD ${p}</div>
-    </div>`).join('');
-  goToStep(2);
-}
-
-function selectPeriod(p){
-  _loginPeriod=p;
-  const t=TEACHERS[_loginTeacher];
-  document.getElementById('login-step3-label').textContent=(t?t.name+' · ':'')+'Period '+p;
-  document.getElementById('class-code-input').value='';
-  goToStep(3);
-}
-
 function submitClassCode(){
-  const name=document.getElementById('class-code-input').value.trim();
-  const errEl=document.getElementById('code-error');
-  errEl.textContent='';
-  if(!name){errEl.textContent='Please enter your name.';return;}
+  const code=document.getElementById('class-code-input').value.trim().toUpperCase();
+  const errEl=document.getElementById('code-error');errEl.textContent='';
+  if(code==='OLSON219'){
+    document.getElementById('code-gate-overlay').style.display='none';
+    G=newGame();G.period='T';G.isTeacher=true;
+    renderAvatarGrid();renderOutfitGridCreator();updateCharPreview();showScreen('char-screen');return;
+  }
+  const period=CLASS_CODES[code];
+  if(!period){errEl.textContent='Incorrect code. Check with your teacher.';
+    const inp=document.getElementById('class-code-input');inp.style.borderColor='#e04040';
+    setTimeout(()=>{inp.style.borderColor='';},1500);return;
+  }
   document.getElementById('code-gate-overlay').style.display='none';
-  const t=TEACHERS[_loginTeacher];
-  G=newGame();
-  G.name=name;
-  G.period=_loginPeriod;
-  G.teacher=_loginTeacher;
-  G.isTeacher=false;
+  G=newGame();G.period=period;G.isTeacher=false;
   renderAvatarGrid();renderOutfitGridCreator();updateCharPreview();showScreen('char-screen');
 }
 function confirmBackToHub(){
@@ -2194,8 +2143,11 @@ function renderHub(){
   // Badges
   document.getElementById('badges-row').innerHTML=BADGES.map(b=>{
     const earned=G.earnedBadges.includes(b.id);
-    const desc=earned?b.name+': '+b.desc+' ✓':b.name+': '+b.desc+' (not yet earned)';
-    return `<div class="badge-pill ${earned?'earned':''}" onclick="notify(this.dataset.desc,${earned?'\'green\'':'\'\''})" data-desc="${desc}" style="cursor:pointer"><span class="badge-icon">${b.icon}</span><span>${b.name}</span>${!earned?'<span style="font-size:9px;color:var(--text3);margin-left:3px">?</span>':''}</div>`;
+    return `<div class="badge-pill ${earned?'earned':''}" onclick="showBadgeInfo(this.dataset.id)" data-id="${b.id}" style="cursor:pointer">
+      <span class="badge-icon">${b.icon}</span>
+      <span>${b.name}</span>
+      ${!earned?'<span style="font-size:9px;color:var(--text3);margin-left:3px">?</span>':''}
+    </div>`;
   }).join('');
   // Unit list
   const unitList=document.getElementById('unit-list');
@@ -2527,25 +2479,358 @@ function openTimeline(){
 // LEADERBOARD (JSONbin) — Teacher shows on ALL tab only
 // ═══════════════════════════════════════
 async function fetchLeaderboard(){
-  try{
-    const r=await fetch(GS_URL+'?action=get');
-    const d=await r.json();
-    return d.scores||[];
-  }catch(e){return[];}
+  try{const r=await fetch(GS_URL);const d=await r.json();return d.scores||[];}catch(e){return[];}
 }
 async function pushLeaderboard(){
   if(!G||!G.name)return;
   try{
     const av=AVATARS.find(a=>a.id===G.avatarId);
-    const entry={
-      action:'save',
-      name:G.name,score:G.score,level:G.level,rank:getRank().name,
-      cards:G.unlockedCards.length,avatarBadge:av?.badge||'✊',
-      period:G.period,teacher:G.teacher||'',
-      chapters:G.completedChapters.length,
-      correctAnswers:G.correctAnswers||0,totalAnswers:G.totalAnswers||0,
-      isTeacher:G.isTeacher||false,updatedAt:Date.now()
-    };
+    const entry={action:'save',name:G.name,score:G.score,level:G.level,rank:getRank().name,cards:G.unlockedCards.length,avatarBadge:av?.badge||'✊',period:G.period,teacher:G.teacher||'',chapters:G.completedChapters.length,correctAnswers:G.correctAnswers||0,totalAnswers:G.totalAnswers||0,isTeacher:G.isTeacher||false,updatedAt:Date.now()};
     await fetch(GS_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(entry)});
   }catch(e){}
 }
+
+
+let lbFilter='all';
+async function renderLeaderboard(){
+  const el=document.getElementById('lb-content');
+  const status=document.getElementById('lb-sync-status');
+  if(status)status.textContent='Syncing…';
+  const allScores=await fetchLeaderboard();
+  if(status)status.textContent=allScores.length+' activists on the board';
+
+  // Build period tabs
+  const tabsEl=document.getElementById('lb-period-tabs');
+  if(tabsEl){
+    const tabs=[{key:'all',label:'ALL PERIODS'}];
+    if(G&&!G.isTeacher&&G.period&&G.period!=='T')tabs.push({key:G.period,label:'MY PERIOD (Pd '+G.period+')'});
+    tabs.push({key:'3',label:'PERIOD 3'},{key:'5',label:'PERIOD 5'},{key:'6',label:'PERIOD 6'});
+    tabsEl.innerHTML=tabs.map(t=>`<div class="lb-tab ${lbFilter===t.key?'active':''}" onclick="lbFilter='${t.key}';renderLeaderboard()">${t.label}</div>`).join('');
+  }
+
+  // Filter: on period-specific tabs, EXCLUDE teachers. On 'all', INCLUDE teachers.
+  let scores;
+  if(lbFilter==='all'){
+    scores=allScores; // Teachers visible on ALL tab
+  } else {
+    // Period-specific tabs: exclude teachers, filter by period
+    scores=allScores.filter(s=>!s.isTeacher&&String(s.period)===lbFilter);
+  }
+
+  if(!scores.length){el.innerHTML='<div style="text-align:center;padding:2rem;font-family:var(--crimson);font-size:15px;color:var(--text3);font-style:italic">No entries yet for this period!</div>';return;}
+  const medals=['🥇','🥈','🥉'];
+  el.innerHTML=`<table class="lb-table"><thead><tr>
+    <th>#</th><th>ACTIVIST</th><th>PD</th><th>LVL</th><th>SCORE</th><th>🃏</th>
+  </tr></thead><tbody>
+  ${scores.slice(0,25).map((s,i)=>`
+    <tr class="${G&&s.name===G.name&&s.period===G.period?'lb-you':''}" ${s.isTeacher?'style="opacity:0.7"':''}>
+      <td style="font-family:var(--bebas);font-size:12px;color:${i<3?'var(--amber)':'var(--text3)'}">${i<3?medals[i]:'#'+(i+1)}</td>
+      <td><div style="display:flex;align-items:center;gap:8px">
+        <span style="font-size:20px">${s.avatarBadge||'✊'}</span>
+        <div><div class="lb-name">${s.name}${s.isTeacher?' 📚':''}</div><div style="font-size:10px;color:var(--teal)">${s.rank||''}</div></div>
+      </div></td>
+      <td style="font-family:var(--dm);font-size:9px;color:var(--text2)">${s.isTeacher?'Teacher':s.period||'?'}</td>
+      <td style="font-size:13px;color:var(--teal)">${s.level}</td>
+      <td class="lb-score">${s.score?.toLocaleString()}</td>
+      <td style="font-size:13px;color:var(--text2)">${s.cards}</td>
+    </tr>`).join('')}
+  </tbody></table>`;
+}
+
+function showBadgeInfo(id){
+  const b=BADGES.find(x=>x.id===id);
+  if(!b)return;
+  const earned=G.earnedBadges.includes(id);
+  notify(b.icon+' '+b.name+': '+b.desc+(earned?' ✓':''),earned?'green':'');
+}
+function openLeaderboard(){
+  if(G&&!G.isTeacher&&G.period)lbFilter=G.period;
+  else lbFilter='all';
+  document.getElementById('leaderboard-overlay').classList.add('show');
+  renderLeaderboard();
+}
+function closeLeaderboard(){document.getElementById('leaderboard-overlay').classList.remove('show');}
+
+// ═══════════════════════════════════════
+// NOTIFICATIONS
+// ═══════════════════════════════════════
+function notify(msg,type){
+  const n=document.createElement('div');n.className='notif '+(type||'');n.textContent=msg;
+  document.body.appendChild(n);setTimeout(()=>n.remove(),3200);
+}
+
+// ═══════════════════════════════════════
+// SHOP
+// ═══════════════════════════════════════
+let shopCat='Hats';
+function openShop(){
+  document.getElementById('shop-gold-display').textContent=G.gold;
+  renderShopTabs();renderShopItems();
+  document.getElementById('shop-overlay').classList.add('show');
+}
+function renderShopTabs(){
+  document.getElementById('shop-tabs').innerHTML=SHOP_CATEGORIES.map(cat=>
+    `<div class="lb-tab ${shopCat===cat?'active':''}" onclick="shopCat='${cat}';renderShopTabs();renderShopItems()">${cat}</div>`
+  ).join('');
+}
+function renderShopItems(){
+  if(!G.shopOwned)G.shopOwned=[];
+  const items=SHOP_ITEMS.filter(i=>i.cat===shopCat);
+  const grid=document.getElementById('shop-items-grid');
+  grid.style.display='grid';
+  grid.style.gridTemplateColumns='repeat(3,1fr)';
+  grid.style.gap='8px';
+  grid.innerHTML=items.map(item=>{
+    const owned=G.shopOwned.includes(item.id)||(item.cat==='Outfits'&&G.unlockedOutfits&&G.unlockedOutfits.includes(item.id));
+    const meetsChapter=!item.reqChapter||G.completedChapters.includes(item.reqChapter);
+    const meetsScore=!item.reqScore||G.score>=item.reqScore;
+    const meetsAll10=!item.reqChapters||G.completedChapters.length>=item.reqChapters;
+    const canBuy=meetsChapter&&meetsScore&&meetsAll10&&!owned&&G.gold>=item.cost;
+    const locked=!meetsChapter||!meetsScore||!meetsAll10;
+    const equipped=(item.cat==='Hats'&&G.equippedHat===item.id)||(item.cat==='Shoes'&&G.equippedShoes===item.id)||(item.cat==='Accessories'&&G.equippedAcc===item.id)||(item.cat==='Outfits'&&G.outfitId===item.id);
+    let statusLabel=owned?(equipped?'✓ WEARING':'TAP TO WEAR'):(canBuy?`⭐ ${item.cost}`:(locked?`🔒 ${item.req||''}`:` ⭐ ${item.cost}`));
+    let statusColor=owned?(equipped?'var(--green2)':'var(--amber)'):(canBuy?'var(--amber)':(locked?'var(--text3)':'var(--red2)'));
+    const clickAction=owned?(item.cat==='Outfits'?`equipOutfit('${item.id}')`:`equipItem('${item.id}','${item.cat}',true)`):canBuy?`buyItem('${item.id}')`:'';
+    return `<div class="shop-item ${owned?'owned':''} ${canBuy?'affordable':''} ${locked?'locked':''} ${equipped?'equipped':''}"
+      style="${equipped?'border-color:var(--green2);opacity:1':''}"
+      onclick="${clickAction}" title="${item.desc}">
+      <div class="shop-item-icon">${item.icon}</div>
+      <div class="shop-item-name">${item.name}</div>
+      <div class="shop-item-cost" style="color:${statusColor}">${statusLabel}</div>
+      ${item.req&&!owned?`<div class="shop-item-req">Req: ${item.req}</div>`:''}
+    </div>`;
+  }).join('');
+}
+function buyItem(id){
+  if(!G.shopOwned)G.shopOwned=[];
+  const item=SHOP_ITEMS.find(i=>i.id===id);
+  if(!item||G.gold<item.cost)return;
+  G.gold-=item.cost;
+  G.shopOwned.push(id);
+  equipItem(id,item.cat,false);
+  if(item.cat==='Outfits'){
+    if(!G.unlockedOutfits)G.unlockedOutfits=['casual'];
+    if(!G.unlockedOutfits.includes(id))G.unlockedOutfits.push(id);
+    G.outfitId=id;
+  }
+  save();updateHUD();
+  document.getElementById('shop-gold-display').textContent=G.gold;
+  renderShopItems();
+  notify(`${item.icon} ${item.name} equipped!`,'green');
+  checkAchievements();
+}
+function equipItem(id,cat,doSave){
+  if(cat==='Hats'){G.equippedHat=G.equippedHat===id?null:id;}
+  else if(cat==='Shoes'){G.equippedShoes=G.equippedShoes===id?null:id;}
+  else if(cat==='Accessories'){G.equippedAcc=G.equippedAcc===id?null:id;}
+  if(doSave){
+    save();updateHUD();
+    const hubAv=document.getElementById('hub-avatar');
+    const av=AVATARS.find(a=>a.id===G.avatarId);
+    if(hubAv&&av)hubAv.innerHTML=`<div style="width:60px;height:60px">${makeAvatar(av.id)}</div>`;
+    const charPrev=document.getElementById('char-preview-avatar');
+    if(charPrev&&av)charPrev.innerHTML=makeAvatar(av.id);
+    renderShopItems();
+    notify('Equipped! ✓','green');
+  }
+}
+
+// ═══════════════════════════════════════
+// COMPLETION SCREEN
+// ═══════════════════════════════════════
+function checkUnitComplete(){
+  if(G.completedChapters.length>=CHAPTERS.length&&!G._completionShown){
+    G._completionShown=true;save();
+    setTimeout(showCompletionScreen,800);
+  }
+}
+function showCompletionScreen(){
+  const acc=G.totalAnswers>0?Math.round(G.correctAnswers/G.totalAnswers*100):0;
+  const rank=getRank();
+  document.getElementById('completion-name').textContent=G.name;
+  document.getElementById('completion-rank').textContent=rank.name+' · Level '+G.level;
+  document.getElementById('completion-stats').innerHTML=[
+    {icon:'🎯',label:'Overall Accuracy',val:acc+'%'},
+    {icon:'⭐',label:'Total Score',val:G.score.toLocaleString()},
+    {icon:'🃏',label:'Cards Collected',val:G.unlockedCards.length+'/'+CARDS.length},
+  ].map(s=>`<div style="background:var(--bg2);border:1px solid var(--border2);padding:14px;text-align:center">
+    <div style="font-size:28px;margin-bottom:4px">${s.icon}</div>
+    <div style="font-family:var(--bebas);font-size:22px;color:var(--amber)">${s.val}</div>
+    <div style="font-family:var(--dm);font-size:8px;color:var(--text3);margin-top:2px">${s.label}</div>
+  </div>`).join('');
+  document.getElementById('completion-badges').innerHTML=G.earnedBadges.map(bid=>{
+    const b=BADGES.find(x=>x.id===bid);
+    return b?`<div title="${b.name}" style="font-size:24px">${b.icon}</div>`:'';
+  }).join('');
+  const msg=acc>=90?'Exceptional! You demonstrated mastery of the Civil Rights Movement. History would be proud.':
+    acc>=75?'Outstanding! Your decisions showed strong understanding of the movement\'s strategies and significance.':
+    acc>=60?'Good work! You understood the key turning points. Review the chapters where the movement challenged you.':
+    'You\'ve completed the journey. The Civil Rights Movement was complex — every replay teaches you more.';
+  document.getElementById('completion-message').textContent=msg;
+  document.getElementById('completion-overlay').style.display='block';
+}
+function printCertificate(){
+  const acc=G.totalAnswers>0?Math.round(G.correctAnswers/G.totalAnswers*100):0;
+  const rank=getRank();
+  const certHTML=`
+  <div style="font-family:Georgia,serif;background:#fff;color:#1a1008;padding:48px;max-width:680px;margin:0 auto;box-sizing:border-box">
+    <div style="border:4px double #8b6020;padding:40px;text-align:center">
+      <div style="font-size:11px;letter-spacing:4px;color:#8b6020;text-transform:uppercase;margin-bottom:8px">Certificate of Completion</div>
+      <div style="font-size:30px;font-weight:bold;margin:10px 0;color:#1a0808">Chronicles of Change</div>
+      <div style="font-size:14px;color:#5a3810;margin:6px 0">Civil Rights Movement Unit · US History</div>
+      <div style="margin:20px 0;font-size:14px">This certifies that</div>
+      <div style="font-size:26px;font-style:italic;color:#c07818;margin:14px 0;border-bottom:2px solid #c07818;padding-bottom:8px;display:inline-block">${G.name}</div>
+      <div style="margin:12px 0;font-size:13px;line-height:1.6">has completed all 10 chapters of the Civil Rights Movement unit<br>achieving the rank of <strong>${rank.name}</strong></div>
+      <div style="display:flex;justify-content:center;gap:36px;margin:20px 0;flex-wrap:wrap">
+        ${[{v:acc+'%',l:'Accuracy'},{v:G.score.toLocaleString(),l:'Total Score'},{v:G.earnedBadges.length,l:'Badges'},{v:G.unlockedCards.length+'/'+CARDS.length,l:'Cards'}]
+          .map(s=>`<div style="text-align:center"><div style="font-size:26px;font-weight:bold;color:#c07818">${s.v}</div><div style="font-size:9px;letter-spacing:2px;color:#8b6020;text-transform:uppercase;margin-top:2px">${s.l}</div></div>`).join('')}
+      </div>
+      <div style="font-style:italic;font-size:13px;color:#584840;margin:18px 0;line-height:1.6;border-left:3px solid #c07818;padding:8px 16px;text-align:left">
+        "The arc of the moral universe is long, but it bends toward justice."<br>
+        <span style="font-style:normal;font-size:11px">— Dr. Martin Luther King Jr.</span>
+      </div>
+      <div style="font-size:10px;color:#8b6020;letter-spacing:2px;margin-top:20px">Created by Joshua Olson · Florida EOC Aligned</div>
+      <div style="font-size:9px;color:#a09080;letter-spacing:1px;margin-top:6px">SS.912.A.7.5 · SS.912.A.7.6 · SS.912.A.7.7 · SS.912.A.7.8 · SS.912.A.7.9 · SS.912.A.7.13</div>
+    </div>
+  </div>`;
+  const area=document.getElementById('print-area');
+  area.style.display='block';
+  area.innerHTML=certHTML;
+  setTimeout(()=>{
+    window.print();
+    setTimeout(()=>{area.style.display='none';},500);
+  },100);
+}
+
+// ═══════════════════════════════════════
+// TEACHER DASHBOARD
+// ═══════════════════════════════════════
+let tdPeriod='all';
+let tdSort='score';
+let tdSortDir=-1;
+function openTeacherDashboard(){
+  if(!G||!G.isTeacher){notify('Teacher access only','red');return;}
+  document.getElementById('teacher-dashboard').classList.add('show');
+  loadTeacherData();
+}
+async function loadTeacherData(){
+  const statusEl=document.getElementById('td-sync-status');
+  if(statusEl)statusEl.textContent='Fetching class data…';
+  const allScores=await fetchLeaderboard();
+  const students=allScores.filter(s=>!s.isTeacher);
+  const everyone=allScores;
+  if(statusEl)statusEl.textContent=students.length+' students · '+allScores.length+' total entries · last sync: '+new Date().toLocaleTimeString();
+
+  // Period tabs — built from everyone so teacher period shows too
+  const periods=[...new Set(everyone.map(s=>s.period).filter(Boolean))].sort();
+  const tabsEl=document.getElementById('td-period-tabs');
+  if(tabsEl){
+    const tabs=[{key:'all',label:'ALL ('+everyone.length+')'}, ...periods.map(p=>({key:p,label:(p==='T'?'TEACHER':('PD '+p))+' ('+everyone.filter(s=>String(s.period)===p).length+')'}))];
+    tabsEl.innerHTML=tabs.map(t=>`<div class="lb-tab ${tdPeriod===t.key?'active':''}" onclick="tdPeriod='${t.key}';renderTeacherView(window._tdStudents)">${t.label}</div>`).join('');
+  }
+  window._tdStudents=everyone;
+  renderTeacherView(everyone);
+}
+function renderTeacherView(allStudents){
+  const everyone=tdPeriod==='all'?allStudents:allStudents.filter(s=>String(s.period)===tdPeriod);
+  const students=everyone.filter(s=>!s.isTeacher); // stats use students only
+
+  // Summary stats
+  const avgScore=students.length?Math.round(students.reduce((a,s)=>a+(s.score||0),0)/students.length):0;
+  const avgChapters=students.length?Math.round(students.reduce((a,s)=>a+(s.chapters||0),0)/students.length*10)/10:0;
+  const completed=students.filter(s=>s.chapters>=10).length;
+  const avgCards=students.length?Math.round(students.reduce((a,s)=>a+(s.cards||0),0)/students.length*10)/10:0;
+  const sumEl=document.getElementById('td-summary');
+  if(sumEl)sumEl.innerHTML=[
+    {icon:'👥',val:students.length,lbl:'Students'},
+    {icon:'⭐',val:avgScore.toLocaleString(),lbl:'Avg Score'},
+    {icon:'📖',val:avgChapters+'/10',lbl:'Avg Chapters'},
+    {icon:'🏆',val:completed,lbl:'Finished Unit'},
+  ].map(s=>`<div style="background:var(--bg2);border:1px solid var(--border2);padding:12px;text-align:center">
+    <div style="font-size:22px;margin-bottom:4px">${s.icon}</div>
+    <div style="font-family:var(--bebas);font-size:22px;color:var(--amber)">${s.val}</div>
+    <div style="font-family:var(--dm);font-size:8px;color:var(--text3);margin-top:2px;letter-spacing:1px">${s.lbl}</div>
+  </div>`).join('');
+
+  // Chapter accuracy bars — using chapterReports if available
+  const barsEl=document.getElementById('td-chapter-bars');
+  if(barsEl){
+    const chapterNames=['Montgomery','Sit-Ins','Freedom Rides','Birmingham','March on Wash.','Selma','Great Society','Black Power','King','Legacy'];
+    let barsHTML='';
+    chapterNames.forEach((name,i)=>{
+      // Count students who have completed this chapter (by chapters count as proxy)
+      const reached=students.filter(s=>(s.chapters||0)>i).length;
+      const pct=students.length?Math.round(reached/students.length*100):0;
+      const barColor=pct>=75?'var(--green2)':pct>=50?'var(--amber)':'var(--red2)';
+      barsHTML+=`<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+        <div style="font-family:var(--dm);font-size:9px;color:var(--text2);width:100px;flex-shrink:0">Ch.${i+1} ${name}</div>
+        <div style="flex:1;height:14px;background:rgba(255,255,255,0.05);border-radius:2px;overflow:hidden">
+          <div style="width:${pct}%;height:100%;background:${barColor};border-radius:2px;transition:width 0.5s"></div>
+        </div>
+        <div style="font-family:var(--bebas);font-size:12px;color:${barColor};min-width:36px;text-align:right">${pct}%</div>
+        <div style="font-family:var(--dm);font-size:8px;color:var(--text3);min-width:50px">${reached}/${students.length} students</div>
+      </div>`;
+    });
+    barsEl.innerHTML=barsHTML||'<div style="font-family:var(--crimson);color:var(--text3);font-style:italic">No student data yet.</div>';
+  }
+
+  // Student roster table
+  const rosterEl=document.getElementById('td-roster');
+  if(rosterEl){
+    if(!everyone.length){rosterEl.innerHTML='<div style="font-family:var(--crimson);color:var(--text3);font-style:italic;padding:12px">No entries found for this period.</div>';return;}
+    const sorted=[...everyone].sort((a,b)=>{
+      const v={score:(s)=>s.score||0,level:(s)=>s.level||1,chapters:(s)=>s.chapters||0,cards:(s)=>s.cards||0,name:(s)=>(s.name||'').toLowerCase(),period:(s)=>s.period||''}[tdSort]||((s)=>s.score||0);
+      return tdSortDir*(v(a)<v(b)?-1:v(a)>v(b)?1:0);
+    });
+    const thStyle='cursor:pointer;user-select:none;';
+    const arrow=(col)=>tdSort===col?(tdSortDir>0?' ↑':' ↓'):'';
+    const sortTh=(col,label)=>`<th style="${thStyle}" onclick="tdSort='${col}';tdSortDir=tdSort==='${col}'?-tdSortDir:-1;renderTeacherView(window._tdStudents)">${label}${arrow(col)}</th>`;
+    rosterEl.innerHTML=`<table class="lb-table" style="margin-bottom:20px"><thead><tr>
+      <th>#</th>${sortTh('name','STUDENT')}${sortTh('period','PD')}${sortTh('score','SCORE')}${sortTh('level','LVL')}${sortTh('chapters','CH.')}${sortTh('cards','🃏')}<th>LAST SEEN</th>
+    </tr></thead><tbody>
+    ${sorted.map((s,i)=>{
+      const lastSeen=s.updatedAt?new Date(s.updatedAt).toLocaleDateString():'—';
+      const chPct=Math.round((s.chapters||0)/10*100);
+      const progressBar=`<div style="display:inline-block;width:40px;height:4px;background:rgba(255,255,255,0.1);border-radius:2px;vertical-align:middle;margin-left:4px"><div style="width:${chPct}%;height:100%;background:var(--amber2);border-radius:2px"></div></div>`;
+      const safeKey=encodeURIComponent(s.name+'||'+s.period);
+      const teacherTag=s.isTeacher?` <span style="font-size:8px;color:var(--teal);border:1px solid var(--teal);padding:1px 4px;border-radius:2px">TEACHER</span>`:'';
+      return `<tr style="${s.isTeacher?'opacity:0.7':''}">
+        <td style="font-family:var(--dm);font-size:10px;color:var(--text3)">${i+1}</td>
+        <td><div class="lb-name">${s.name||'—'}${teacherTag}</div><div style="font-size:9px;color:var(--teal)">${s.rank||''}</div></td>
+        <td style="font-family:var(--dm);font-size:10px;color:var(--text2)">${s.period||'?'}</td>
+        <td class="lb-score">${(s.score||0).toLocaleString()}</td>
+        <td style="font-family:var(--dm);font-size:11px;color:var(--teal)">Lv.${s.level||1}</td>
+        <td style="font-family:var(--dm);font-size:10px;color:var(--text2)">${s.chapters||0}/10${progressBar}</td>
+        <td style="font-family:var(--dm);font-size:10px;color:var(--text2)">${s.cards||0}</td>
+        <td style="font-family:var(--dm);font-size:9px;color:var(--text3)">${lastSeen}</td>
+        <td><button onclick="deleteStudent('${s.name}','${s.period}')" style="font-family:var(--bebas);font-size:10px;letter-spacing:1px;background:transparent;border:1px solid var(--red2);color:var(--red2);padding:3px 8px;cursor:pointer" title="Remove from leaderboard">✕</button></td>
+      </tr>`;
+    }).join('')}
+    </tbody></table>`;
+  }
+}
+
+async function deleteStudent(name,period){
+  if(!confirm(`Remove "${name}" (Period ${period}) from the leaderboard?`))return;
+  notify('Removing…');
+  try{
+    await fetch(GS_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'delete',name,period})});
+    notify(`${name} removed`,'green');
+    loadTeacherData();
+  }catch(e){notify('Error removing student','red');}
+}
+
+async function resetAllScores(){
+  if(!confirm('Reset ALL leaderboard scores? This cannot be undone.'))return;
+  if(!confirm('Are you sure? Every student score will be deleted.'))return;
+  try{
+    await fetch(GS_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'reset'})});
+    notify('Leaderboard reset!','green');
+    loadTeacherData();
+  }catch(e){notify('Error resetting leaderboard','red');}
+}
+
+window.addEventListener('DOMContentLoaded',init);
+</script>
+</body>
+</html>
