@@ -611,7 +611,7 @@ function makeAvatar(id,opts){
   const shoes=(opts&&opts.shoes)||(G&&G.equippedShoes)||null;
   const acc=(opts&&opts.acc)||(G&&G.equippedAcc)||null;
   // Outfit overrides top color
-  const outfitColors={casual:null,sunday:'#6030a0',protest:'#c03030',scholar:'#1a6b3a',freedom:'#d4860a',legacy:'#1a4a9b'};
+  const outfitColors={casual:null,sunday:'#2a1060',protest:'#8b2020',scholar:'#1a3a1a',freedom:'#c07818',legacy:'#1a1a6b'};
   const topColor=(G&&outfitColors[G.outfitId])||s.top;
   // Hat colors/shapes
   const hatLayers={
@@ -2659,14 +2659,14 @@ async function loadTeacherData(){
   if(statusEl)statusEl.textContent='Fetching class data…';
   const allScores=await fetchLeaderboard();
   const students=allScores.filter(s=>!s.isTeacher);
-  const everyone=allScores;
-  if(statusEl)statusEl.textContent=students.length+' students · '+allScores.length+' total entries · last sync: '+new Date().toLocaleTimeString();
+  const everyone=allScores; // includes teachers for roster display
+  if(statusEl)statusEl.textContent=students.length+' students · last sync: '+new Date().toLocaleTimeString();
 
-  // Period tabs — built from everyone so teacher period shows too
-  const periods=[...new Set(everyone.map(s=>s.period).filter(Boolean))].sort();
+  // Period tabs
+  const periods=[...new Set(students.map(s=>s.period).filter(Boolean))].sort();
   const tabsEl=document.getElementById('td-period-tabs');
   if(tabsEl){
-    const tabs=[{key:'all',label:'ALL ('+everyone.length+')'}, ...periods.map(p=>({key:p,label:(p==='T'?'TEACHER':('PD '+p))+' ('+everyone.filter(s=>String(s.period)===p).length+')'}))];
+    const tabs=[{key:'all',label:'ALL PERIODS'},...periods.map(p=>({key:p,label:'PERIOD '+p}))];
     tabsEl.innerHTML=tabs.map(t=>`<div class="lb-tab ${tdPeriod===t.key?'active':''}" onclick="tdPeriod='${t.key}';renderTeacherView(window._tdStudents)">${t.label}</div>`).join('');
   }
   window._tdStudents=everyone;
