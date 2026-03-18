@@ -2181,8 +2181,12 @@ function loadBeat(){
   updateMomentumDisplay();
   document.getElementById('decision-header').textContent=beat.decision;
   const letters=['A','B','C','D'];
-  // Shuffle choices fresh every load — stored in module var, NOT on beat object
-  const shuffled=[...beat.choices].sort(()=>Math.random()-0.5);
+  // Fisher-Yates shuffle — guaranteed uniform randomization
+  const shuffled=[...beat.choices];
+  for(let i=shuffled.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [shuffled[i],shuffled[j]]=[shuffled[j],shuffled[i]];
+  }
   window._currentShuffled=shuffled;
   document.getElementById('choices-container').innerHTML=shuffled.map((c,i)=>
     `<button class="choice-btn" id="choice-${i}" onclick="selectChoice(${i})">
