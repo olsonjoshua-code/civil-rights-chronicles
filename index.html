@@ -111,7 +111,8 @@ body::after { content: ''; position: fixed; inset: 0;
 .hub-momentum-wrap { background: rgba(255,255,255,0.05); height: 4px; border-radius: 2px; }
 .hub-momentum-fill { height: 100%; background: linear-gradient(90deg, var(--amber2), var(--amber3)); border-radius: 2px; transition: width 0.6s; }
 .unit-card { background: var(--bg2); border: 1px solid var(--border); margin-bottom: 10px; overflow: hidden; transition: border-color 0.2s; cursor: pointer; }
-.unit-card.available:hover { border-color: var(--amber2); } .unit-card.locked { opacity: 0.5; cursor: not-allowed; pointer-events: none; } .unit-card.completed { border-color: var(--green); }
+.unit-card.available:hover { border-color: var(--amber2); } .unit-card.locked { opacity: 0.5; cursor: not-allowed; pointer-events: none; } .unit-card.completed { border-color: var(--green); cursor: default; }
+.unit-card.available { cursor: pointer; }
 .unit-card-header { display: flex; align-items: center; gap: 12px; padding: 14px 16px; }
 .unit-icon { font-size: 28px; flex-shrink: 0; } .unit-info { flex: 1; }
 .unit-number { font-family: var(--dm); font-size: 9px; color: var(--text3); letter-spacing: 2px; text-transform: uppercase; }
