@@ -2127,6 +2127,7 @@ function renderHub(){
           <div class="unit-desc">${ch.period}</div>
         </div>
         <div class="unit-status ${statusClass}">${statusText}</div>
+          ${completed?`<div style="font-family:var(--dm);font-size:8px;color:var(--amber2);margin-top:3px">↺ replay for gold</div>`:''}
       </div>
       <div class="unit-progress-bar"><div class="unit-progress-fill" style="width:${progress}%"></div></div>
     </div>`;
@@ -2159,6 +2160,8 @@ function openChapter(idx){
 
 function startChapter(){
   currentBeatIdx=0;chapterScore=0;chapterCorrect=0;chapterTotal=0;chapterLog=[];
+  const ch=CHAPTERS[currentChapterIdx];
+  if(G.completedChapters.includes(ch.id))notify('Replay mode — gold only, no score points ⭐','green');
   loadBeat();showScreen('story-screen');
 }
 
@@ -2214,8 +2217,12 @@ function selectChoice(idx){
   });
   const fp=document.getElementById('feedback-panel');const isCorrect=choice.correct;
   chapterLog.push({question:beat.decision,chosen:choice.text,correct:isCorrect,correctAnswer:choices.find(c=>c.correct)?.text||'',feedback:choice.feedback,standard:choice.std});
+  const _isReplay=G.completedChapters.includes(CHAPTERS[currentChapterIdx].id);
   if(isCorrect){
-    chapterCorrect++;G.correctAnswers++;const pts=200;G.score+=pts;G.gold+=50;chapterScore+=pts;
+    chapterCorrect++;G.correctAnswers++;
+    const pts=_isReplay?0:200;
+    if(pts)G.score+=pts,chapterScore+=pts;
+    G.gold+=_isReplay?25:50;
     G.momentum=Math.min(G.maxMomentum,G.momentum+8);
     const txt=choice.text.toLowerCase();
     if(txt.includes('nonviolent')||txt.includes('peaceful')||txt.includes('calm')||txt.includes('continue'))G.nonviolentChoices++;
