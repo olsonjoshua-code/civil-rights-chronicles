@@ -2148,11 +2148,11 @@ function renderHub(){
   const unitList=document.getElementById('unit-list');
   unitList.innerHTML=CHAPTERS.map((ch,idx)=>{
     const completed=G.completedChapters.includes(ch.id);
-    const available=idx===0||G.completedChapters.includes(CHAPTERS[idx-1]?.id);
+    const prevDone=idx===0||G.completedChapters.includes(CHAPTERS[idx-1]?.id);
+    const available=prevDone&&!completed; // only open if prev done AND not yet completed
     const progress=completed?100:0;
-    let statusClass=available?'available':'locked';
-    let statusText=available?'PLAY':'LOCKED';
-    if(completed){statusClass='completed';statusText='COMPLETED';}
+    let statusClass=completed?'completed':(available?'available':'locked');
+    let statusText=completed?'COMPLETED':(available?'PLAY':'LOCKED');
     const beatCount=ch.beats.length;
     return `<div class="unit-card ${statusClass}" onclick="${available?`openChapter(${idx})`:''}">
       <div class="unit-card-header">
