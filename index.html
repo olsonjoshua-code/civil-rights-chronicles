@@ -2242,6 +2242,12 @@ function openChapter(idx){
   showScreen('chapter-intro');
 }
 
+function goHome(){save();showScreen('title-screen');document.getElementById('game-header').style.display='none';document.getElementById('bottom-nav').style.display='none';}
+function confirmBackToHub(){
+  if(confirm('Return to hub? Your progress in this beat will be saved, but the current question resets.')){
+    save();renderHub();showScreen('hub-screen');
+  }
+}
 function startChapter(){
   currentBeatIdx=0;chapterScore=0;chapterCorrect=0;chapterTotal=0;chapterLog=[];
   loadBeat();showScreen('story-screen');
@@ -2571,8 +2577,8 @@ async function renderLeaderboard(){
       if(p===G.period)return; // already added as MY CLASS
       const parts=p.split('-');
       const tKey=parts[0];const pNum=parts[1]||p;
-      const tName=TEACHERS[tKey]?.name||tKey;
-      const label=tName.split(' ')[1]+' Pd '+pNum; // e.g. "Olson Pd 3"
+      const tObj=TEACHERS[tKey];
+      const label=tObj?(tObj.name.split(' ')[1]+' Pd '+pNum):('Pd '+p); // graceful fallback for old entries
       if(!tabs.find(t=>t.key===p))tabs.push({key:p,label});
     });
     tabsEl.innerHTML=tabs.map(t=>`<div class="lb-tab ${lbFilter===t.key?'active':''}" onclick="lbFilter='${t.key}';renderLeaderboard()">${t.label}</div>`).join('');
