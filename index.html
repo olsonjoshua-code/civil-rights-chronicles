@@ -257,8 +257,18 @@ body::after { content: ''; position: fixed; inset: 0;
   <div class="game-subtitle">An Interactive History Journey</div>
   <div class="game-unit-badge">Unit 14 — The Civil Rights Movement</div>
   <div style="display:flex;flex-direction:column;align-items:center;gap:10px;max-width:300px;margin:0 auto">
-    <button class="btn full" onclick="startNewGame()"><span>Begin Your Journey</span></button>
-    <button class="btn full blue" id="btn-continue" onclick="continueGame()" style="display:none"><span>Continue</span></button>
+    <!-- Returning player panel — shown when save exists -->
+    <div id="returning-player-panel" style="display:none;background:var(--bg2);border:1px solid var(--green2);padding:16px;width:100%;text-align:center;margin-bottom:4px">
+      <div style="font-family:var(--dm);font-size:9px;color:var(--green2);letter-spacing:2px;margin-bottom:4px">WELCOME BACK</div>
+      <div id="returning-name" style="font-family:var(--bebas);font-size:22px;color:var(--cream);letter-spacing:2px"></div>
+      <div id="returning-info" style="font-family:var(--dm);font-size:10px;color:var(--text2);margin-top:4px"></div>
+      <button class="btn full green" id="btn-continue" onclick="continueGame()" style="margin-top:12px"><span>▶ CONTINUE</span></button>
+      <button class="btn full" onclick="startNewGame()" style="border-color:var(--border2);color:var(--text3);margin-top:6px;font-size:10px"><span>NEW / SWITCH PLAYER</span></button>
+    </div>
+    <!-- New player panel — shown when no save exists -->
+    <div id="new-player-panel">
+      <button class="btn full" onclick="startNewGame()"><span>Begin Your Journey</span></button>
+    </div>
     <button class="btn full" style="border-color:var(--border2);color:var(--text2)" onclick="openLeaderboard()"><span>Leaderboard</span></button>
     <div id="teacher-login-box" style="display:none;margin-top:8px">
       <input id="teacher-code-input" type="password" maxlength="10"
@@ -1973,7 +1983,14 @@ function hideLoading(){
   ls.style.transition='opacity 0.4s';ls.style.opacity='0';
   setTimeout(()=>{
     ls.style.display='none';
-    try{if(load()&&G&&G.name)document.getElementById('btn-continue').style.display='block';}catch(e){}
+    try{
+      if(load()&&G&&G.name){
+        document.getElementById('returning-player-panel').style.display='block';
+        document.getElementById('new-player-panel').style.display='none';
+        document.getElementById('returning-name').textContent=G.name.toUpperCase();
+        document.getElementById('returning-info').textContent='Level '+G.level+' · '+G.score.toLocaleString()+' pts · '+G.completedChapters.length+'/11 chapters';
+      }
+    }catch(e){}
   },420);
 }
 
